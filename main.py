@@ -1,7 +1,8 @@
+from tokenize import Number
 from lexer import Lex
 from Parser.parser import Parse
 from interpreter import VisitNode
-from context import Context
+from context import Context, SymbolDictionary
 
 def Print(result, tokens = None, ast = None):
     if tokens == None and ast == None:
@@ -18,10 +19,14 @@ def Print(result, tokens = None, ast = None):
         print("Result:", result)
 
 if __name__ == '__main__':
+    symbols = SymbolDictionary()
+    context = Context()
+    context.symbolDictionary = symbols
+
     while True:
-        context = Context()
         text = input('>')
         tokens = Lex(text)
         ast = Parse(tokens, index=0)
         result = VisitNode(ast, context)
-        Print(result, tokens, ast)
+        if result:
+            Print(result, tokens, ast)

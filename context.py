@@ -9,12 +9,8 @@ class SymbolDictionary:
             return self.parent.GetValue(name)
         return value
 
-    def SetValue(self, name, value):
-        print(f"Name: {name}, Value: {type(value)}")
+    def SetValue(self, name: str, value):
         self.symbols[name] = value
-
-    def RemoveValue(self, name):
-        del self.symbols[name]
 
     def Print(self):
         for item in self.symbols.values():
