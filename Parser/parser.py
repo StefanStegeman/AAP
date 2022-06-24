@@ -71,12 +71,12 @@ def FunctionDefenition(tokens, index):
     if type(tokens[index]) == Identifier:
         token = tokens[index] 
         index = IncrementIndex(tokens, index)
-        if type(tokens[index]) != Param:
+        if type(tokens[index]) != LPar:
             raise Exception("Expected Param token..")
-    # else:
-    #     token = None       
-    # if type(tokens[index]) != LPar:
-    #     raise Exception("Expected Identifier or LPar token..")
+    else:
+        token = None       
+    if type(tokens[index]) != LPar:
+        raise Exception("Expected Identifier or LPar token..")
     
     index = IncrementIndex(tokens, index)
     arguments = []
@@ -92,11 +92,11 @@ def FunctionDefenition(tokens, index):
             else:
                 raise Exception("Expected Identifier token..")
 
-    #     if type(tokens[index]) != RPar:
-    #         raise Exception("Expected RPar token..")
-    # else:
-    #     if type(tokens[index]) != RPar:
-    #         raise Exception("Expected RPar token..")
+        if type(tokens[index]) != RPar:
+            raise Exception("Expected RPar token..")
+    else:
+        if type(tokens[index]) != RPar:
+            raise Exception("Expected RPar token..")
 
     index = IncrementIndex(tokens, index)   
     if type(tokens[index]) != Arrow:
@@ -108,24 +108,24 @@ def FunctionDefenition(tokens, index):
 
 def CallFunction(tokens, index):
     factor, index = Factor(tokens, index)
-    if type(tokens[index]) == Param:
+    if type(tokens[index]) == LPar:
         index = IncrementIndex(tokens, index)
         arguments = []
 
-        # if type(tokens[index]) == RPar:
-        #     index = IncrementIndex(tokens, index)
-        # else:
-        expression, index = Expression(tokens, index)
-        arguments.append(expression)
-
-        while type(tokens[index]) == Comma:
+        if type(tokens[index]) == RPar:
             index = IncrementIndex(tokens, index)
+        else:
             expression, index = Expression(tokens, index)
             arguments.append(expression)
 
-        # if type(tokens[index]) != RPar:
-        #     raise Exception("Expected RPar token..")
-        index = IncrementIndex(tokens, index)
+            while type(tokens[index]) == Comma:
+                index = IncrementIndex(tokens, index)
+                expression, index = Expression(tokens, index)
+                arguments.append(expression)
+
+            if type(tokens[index]) != RPar:
+                raise Exception("Expected RPar token..")
+            index = IncrementIndex(tokens, index)
         return FunctionCallNode(factor, arguments), index
     return factor, index
 

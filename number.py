@@ -1,5 +1,5 @@
 class Number:
-    def __init__(self, value, context):
+    def __init__(self, value, context = None):
         self.value = value
         self.context = context
 

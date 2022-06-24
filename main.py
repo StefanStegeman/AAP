@@ -1,4 +1,4 @@
-from tokenize import Number
+from number import Number
 from lexer import Lex
 from Parser.parser import Parse
 from interpreter import VisitNode
@@ -22,16 +22,13 @@ if __name__ == '__main__':
     symbols = SymbolDictionary()
     context = Context()
     context.symbolDictionary = symbols
-    # symbols.SetValue(true, Number(1))
-    # symbols.SetValue(false, Number(0))
+    symbols.SetValue("True", Number(1))
+    symbols.SetValue("False", Number(0))
 
     while True:
         text = input('>')
         tokens = Lex(text)
-        print(tokens)
         ast = Parse(tokens, index=0)
-        # print(ast)
         result = VisitNode(ast, context)
         if result:
-            # Print(result, tokens, ast)
-            Print(result)
+            Print(result, tokens, ast)
