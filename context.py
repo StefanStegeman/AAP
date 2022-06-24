@@ -17,7 +17,6 @@ class SymbolDictionary:
             print(item, type(item))
 
 class Context:
-    def __init__(self, parent = None, parent_entry = None) -> None:
+    def __init__(self, parent = None) -> None:
         self.parent = parent
-        self.parent_entry = parent_entry
         self.symbolDictionary = None

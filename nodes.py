@@ -32,3 +32,14 @@ class WhileNode:
     def __init__(self, condition, body) -> None:
         self.condition = condition
         self.body = body
+
+class FunctionAssignNode:
+    def __init__(self, token, arguments, body):
+        self.token = token
+        self.arguments = arguments
+        self.body = body
+
+class FunctionCallNode:
+    def __init__(self, node, arguments):
+        self.node = node
+        self.arguments = arguments

@@ -1,12 +1,47 @@
-from Parser.parser import WhileLoop
 from nodes import *
 from number import Number
 from tokens import *
-from context import Context
+from context import Context, SymbolDictionary
+from copy import deepcopy
+
+class Function:
+    def __init__(self, name, arguments, body, context) -> None:
+        self.name = name
+        self.arguments = arguments
+        self.body = body
+        self.context = context
+
+    def Execute(self, arguments):
+        print("in execute")
+        context = Context(self.context)
+        if self.context.parent:
+            context.symbolDictionary = SymbolDictionary(self.context.parent.symbolDictionary)
+        else:
+            context.symbolDictionary = SymbolDictionary(self.context.symbolDictionary)
+        if len(arguments) > len(self.arguments):
+            print("Exception occured..")
+            raise Exception("Too many arguments given..")
+        elif len(arguments) < len(self.arguments):
+            print("Exception occured..")
+            raise Exception("Too little arguments given..")
+        
+        for i in range(len(arguments)):
+            name = self.arguments[i]
+            value = arguments[i]
+            value.context = context
+            context.symbolDictionary.SetValue(name.value, value)
+            
+        return VisitNode(self.body, context)
 
 def VisitNode(node, context: Context):
     method = globals()[f'Visit{type(node).__name__}']
+    print(method)
+    # try:
     return method(node, context)
+    # except Exception as ex:
+    #     template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+    #     message = template.format(type(ex).__name__, ex.args)
+    #     print(message)
 
 def VisitNumberNode(node: NumberNode, context: Context):
     return Number(node.token.value, context)
@@ -18,8 +53,10 @@ def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context):
     method = getattr(left, f'{type(node.operator).__name__}')
     try:
         return method(right)
-    except:
-        raise Exception("No method found..")
+    except Exception as ex:
+        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+        message = template.format(type(ex).__name__, ex.args)
+        print(message)
 
 def VisitVariableAssignNode(node: VariableAssignNode, context: Context):
     name = node.token.value
@@ -47,3 +84,17 @@ def VisitWhileNode(node: WhileNode, context: Context):
         condition = VisitNode(node.condition, context)
         if not condition.IsTrue(): break
         VisitNode(node.body, context)
+
+def VisitFunctionAssignNode(node: FunctionAssignNode, context: Context):
+    arguments = [name for name in node.arguments]
+    function = Function(node.token.value, arguments, node.body, context) # Operator is een token en geen binary operation node
+    if node.token:
+        context.symbolDictionary.SetValue(node.token.value, function)
+    return function
+
+def VisitFunctionCallNode(node: FunctionCallNode, context: Context):
+    arguments = []
+    function = deepcopy(VisitNode(node.node, context)) #Copy nodig?
+    for argument in node.arguments:
+        arguments.append(VisitNode(argument, context))
+    return function.Execute(arguments)
