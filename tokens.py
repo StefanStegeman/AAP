@@ -1,9 +1,6 @@
 class Token:
     def __str__(self) -> str:
-        return str(self.value)
-
-    def GetClass(self):
-        return self.__class__.__name__
+        return f'{self.__class__.__name__}:{self.value}'
 
 class Int(Token):
     def __init__(self, value) -> None:
