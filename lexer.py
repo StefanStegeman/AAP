@@ -1,11 +1,31 @@
 from tokens import *
 from typing import List
 
-def Lex(text) -> List[Token]:
-    return CreateTokens(SplitText(text))
+def Lex(text: str = None, filename: str = None) -> List[Token]:
+    if text == None:
+        text = ReadFile(filename)
+    return AssignTokens(CreateTokens(SplitLine, text))
 
-def SplitText(text) -> List[str]:
-    return text.split(' ')
+def SplitLine(line) -> List[str]:
+    if not line:
+        return [""]
+    head, *tail = line
+    lst = SplitLine(tail)
+    if head in " \t\r\n":
+        lst = [""] + lst
+    else:
+        word = head + lst[0]
+        lst[0] = word
+    return lst
+
+def CreateTokens(f, text) -> List[Token]:
+    if not text:
+        return []
+    return CreateTokens(f, text[:-1]) + f(text[-1])
+
+def ReadFile(filename: str) -> List[str]:
+    with open(filename, "r") as file:
+        return file.read().splitlines(True)
 
 def IsFloat(string: str) -> bool:
     try:
@@ -14,22 +34,19 @@ def IsFloat(string: str) -> bool:
     except ValueError:
         return False
 
-def CreateTokens(lst: List[str]) -> List[Token]:
-    tokens = []
+def AssignTokens(lst: List[str], tokens: List[Token] = []) -> List[Token]:
     if not lst:
-        return tokens
-    i = 0
-    while i < len(lst):
-        current_word = lst[i]
-        if current_word.isdigit():
-            tokens.append(Int(current_word))
-        elif IsFloat(current_word):
-            tokens.append(Float(current_word))
-        else:
-            try:
-                tokens.append(TokenValues[current_word]())
-            except:
-                tokens.append(Identifier(current_word))
-        i += 1
-    tokens.append(EOF())
-    return tokens
+        return tokens + [EOF()]
+    head, *tail = lst
+    if head.isdigit():
+        return AssignTokens(tail, tokens + [Int(head)])
+    elif IsFloat(head):
+        return AssignTokens(tail, tokens + [Float(head)])
+    else:
+        try:
+            tokens.append(TokenValues[head]())
+        except:
+            if head == "":
+                return AssignTokens(tail, tokens)
+            tokens.append(Identifier(head))
+        return AssignTokens(tail, tokens)

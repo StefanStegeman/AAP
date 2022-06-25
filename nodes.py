@@ -43,3 +43,7 @@ class FunctionCallNode:
     def __init__(self, node, arguments):
         self.node = node
         self.arguments = arguments
+
+class ReturnNode:
+    def __init__(self, node):
+        self.node = node

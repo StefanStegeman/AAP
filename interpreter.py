@@ -12,7 +12,6 @@ class Function:
         self.context = context
 
     def Execute(self, arguments):
-        print("in execute")
         context = Context(self.context)
         if self.context.parent:
             context.symbolDictionary = SymbolDictionary(self.context.parent.symbolDictionary)
@@ -35,7 +34,6 @@ class Function:
 
 def VisitNode(node, context: Context):
     method = globals()[f'Visit{type(node).__name__}']
-    print(method)
     # try:
     return method(node, context)
     # except Exception as ex:

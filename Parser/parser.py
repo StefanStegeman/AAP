@@ -148,6 +148,9 @@ def Factor(tokens, index):
         return FunctionDefenition(tokens, index)
     elif type(token) == Run:
         return CallFunction(tokens, index)
+    elif type(token) == Return:
+        expression, index = Expression(tokens, index)
+        return ReturnNode(expression), index
 
 def Term(tokens, index):
     return BinaryOperation(Factor, (Multiply, Divide), tokens, index)

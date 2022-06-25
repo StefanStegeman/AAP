@@ -92,4 +92,7 @@ class While(Token):
 class Run(Token):
     value = "RUN"
 
-TokenValues = {Plus.value: Plus, Minus.value: Minus, Multiply.value: Multiply, Divide.value: Divide, LPar.value: LPar, RPar.value: RPar, Assign.value: Assign, Variable.value: Variable, Equals.value: Equals, NotEquals.value: NotEquals, GreaterThan.value: GreaterThan, GreaterThanEquals.value: GreaterThanEquals, LessThan.value: LessThan, LessThanEquals.value: LessThanEquals, And.value: And, Or.value: Or, If.value: If, Elif.value: Elif, Else.value: Else, Then.value: Then, While.value: While, Comma.value: Comma, FunctionDef.value: FunctionDef, Arrow.value: Arrow, Run.value : Run}
+class Return(Token):
+    value = "RETURN"
+
+TokenValues = {Plus.value: Plus, Minus.value: Minus, Multiply.value: Multiply, Divide.value: Divide, LPar.value: LPar, RPar.value: RPar, Assign.value: Assign, Variable.value: Variable, Equals.value: Equals, NotEquals.value: NotEquals, GreaterThan.value: GreaterThan, GreaterThanEquals.value: GreaterThanEquals, LessThan.value: LessThan, LessThanEquals.value: LessThanEquals, And.value: And, Or.value: Or, If.value: If, Elif.value: Elif, Else.value: Else, Then.value: Then, While.value: While, Comma.value: Comma, FunctionDef.value: FunctionDef, Arrow.value: Arrow, Run.value : Run, Return.value: Return}

@@ -25,10 +25,14 @@ if __name__ == '__main__':
     symbols.SetValue("True", Number(1))
     symbols.SetValue("False", Number(0))
 
-    while True:
-        text = input('>')
-        tokens = Lex(text)
-        ast = Parse(tokens, index=0)
-        result = VisitNode(ast, context)
-        if result:
-            Print(result, tokens, ast)
+    tokens = Lex(filename="main.AAP")
+    ast = Parse(tokens, index=0)
+    print(VisitNode(ast, context))
+    # while True:
+    #     text = input('>')
+    #     tokens = Lex(text)
+    #     print(tokens)
+        # ast = Parse(tokens, index=0)
+        # result = VisitNode(ast, context)
+        # if result:
+        #     Print(result, tokens, ast)
