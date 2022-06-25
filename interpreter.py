@@ -4,12 +4,37 @@ from tokens import *
 from context import Context, SymbolDictionary
 from copy import deepcopy
 
+class List:
+    def __init__(self, elements, context = None) -> None:
+        self.elements = elements
+        self.context = context
+
+    def Plus(self, other):
+        lst = deepcopy(self)
+        lst.elements.append(other)
+        return lst
+
+    def Minus(self, other):
+        if isinstance(other, Number):
+            lst = deepcopy(self)
+            for item in lst.elements:
+                if item.value == other.value:
+                    print(True)
+                    lst.elements.remove(item)
+                return lst
+        else:
+            raise Exception("Element needs to be a number..")
+
+    def __repr__(self) -> str:
+        return f'[{", ".join([str(x) for x in self.elements])}]'
+
 class Function:
-    def __init__(self, name, arguments, body, context) -> None:
+    def __init__(self, name, arguments, body, context, shouldAutoReturn) -> None:
         self.name = name
         self.arguments = arguments
         self.body = body
         self.context = context
+        self.shouldAutoReturn = shouldAutoReturn
 
     def Execute(self, arguments):
         context = Context(self.context)
@@ -31,6 +56,7 @@ class Function:
             context.symbolDictionary.SetValue(name.value, value)
             
         return VisitNode(self.body, context)
+        # return Number.null if self.shouldAutoReturn else VisitNode(self.body, context)
 
 def VisitNode(node, context: Context):
     method = globals()[f'Visit{type(node).__name__}']
@@ -41,8 +67,22 @@ def VisitNode(node, context: Context):
     #     message = template.format(type(ex).__name__, ex.args)
     #     print(message)
 
+
+
+def VisitListNode(node: ListNode, context: Context):
+    elements = []
+    for element in node.elements:
+        elements.append(VisitNode(element, context))
+    return List(elements, context)
+
 def VisitNumberNode(node: NumberNode, context: Context):
     return Number(node.token.value, context)
+
+def VisitReturnNode(node: ReturnNode, context: Context):
+    if node.node:
+        return VisitNode(node.node, context)
+    else:
+        return Number.null
 
 def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context):
     left = VisitNode(node.left, context)
@@ -70,22 +110,27 @@ def VisitVariableAccessNode(node: VariableAccessNode, context: Context):
     return value
 
 def VisitIfNode(node: IfNode, context: Context):
-    for condition, expression in node.cases:
+    for condition, expression, shouldReturnNull in node.cases:
         value = VisitNode(condition, context)
         if value.IsTrue():
-            return VisitNode(expression, context) 
+            return Number.null if shouldReturnNull else VisitNode(expression, context) 
     if node.elseCase:
-        return VisitNode(node.elseCase, context)
+        expression, shouldReturnNull = node.elseCase
+        return Number.null if shouldReturnNull else VisitNode(expression, context)
+    return Number.null
             
 def VisitWhileNode(node: WhileNode, context: Context):
+    elements = []
     while True:
         condition = VisitNode(node.condition, context)
         if not condition.IsTrue(): break
-        VisitNode(node.body, context)
+        elements.append(VisitNode(node.body, context))
+    return Number.null if node.shouldReturnNull else List(elements, context)
 
 def VisitFunctionAssignNode(node: FunctionAssignNode, context: Context):
     arguments = [name for name in node.arguments]
-    function = Function(node.token.value, arguments, node.body, context) # Operator is een token en geen binary operation node
+    # function = Function(node.token.value, arguments, node.body, context, node.shouldAutoReturn) 
+    function = Function(node.token.value, arguments, node.body, context, True) 
     if node.token:
         context.symbolDictionary.SetValue(node.token.value, function)
     return function

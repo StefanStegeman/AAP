@@ -47,3 +47,7 @@ class Number:
         
     def IsTrue(self):
         return self.value != 0
+
+Number.null = Number(0)
+Number.true = Number(1)
+Number.false = Number(0)

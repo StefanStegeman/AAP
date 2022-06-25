@@ -11,8 +11,12 @@ def SplitLine(line) -> List[str]:
         return [""]
     head, *tail = line
     lst = SplitLine(tail)
-    if head in " \t\r\n":
+    if head in " \t\r":
         lst = [""] + lst
+    elif head in "\n":
+        lst = [head[:-1]] + [head[-1]] + lst
+    elif head in ":":
+        lst = ["\n"] + lst
     else:
         word = head + lst[0]
         lst[0] = word

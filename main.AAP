@@ -1,1 +1,6 @@
-IF 1 == True AND 0 == False THEN 5 ELSE 17
+IF 10 >= 4 THEN 
+    MONKE John = 10 ELSE 
+        MONKE John = 5 HOME
+
+WIFE Claire ( a ) -> a * 10
+RUN Claire
