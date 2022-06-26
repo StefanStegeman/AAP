@@ -1,7 +1,6 @@
-Wife odd OpenBanane n CloseBanane
-    If n == 0 Then 0 Else Run even OpenBanane Ape n Is n - 1 CloseBanane StopWife
+Wife fibbo OpenBanane n CloseBanane
+    If n <= 1 Then
+        n Else
+            Run fibbo OpenBanane Ape n Is n - 1  CloseBanane + Run fibbo OpenBanane Ape n Is n - 1 CloseBanane StopIf StopWife
 
-Wife even OpenBanane n CloseBanane
-    If n == 0 Then 1 Else Run odd OpenBanane Ape n Is n - 1 CloseBanane StopWife
-
-Run even OpenBanane 20 CloseBanane
+Run fibbo OpenBanane 10 CloseBanane

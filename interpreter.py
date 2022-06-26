@@ -3,7 +3,8 @@ from number import Number
 from tokens import *
 from context import Context, SymbolDictionary
 from itertools import chain
-
+from functools import reduce, partial
+from operator import add, is_not
 
 class List:
     def __init__(self, elements, context = None) -> None:
@@ -44,12 +45,6 @@ def VisitNode(node, context: Context):
         message = template.format(type(ex).__name__, ex.args)
         print(message)
 
-def VisitListNode(node: ListNode, context: Context):
-    elements = []
-    for element in node.elements:
-        elements.append(VisitNode(element, context))
-    return List(elements, context)
-
 def VisitNumberNode(node: NumberNode, context: Context):
     return Number(node.token.value, context)
 
@@ -81,6 +76,23 @@ def VisitVariableAccessNode(node: VariableAccessNode, context: Context):
         raise Exception(f"No value found for '{name}'..")
     return value
 
+def VisitListNode(node: ListNode, context: Context):
+    returnNodes = map(lambda element: ReturnNode == type(element), node.elements)
+    returns = reduce(add, returnNodes, 0)
+
+    def VisitElement(element):
+        if not returns:
+            return VisitNode(element, context)
+        if type(element) == ReturnNode:
+            return VisitNode(element, context)
+        VisitNode(element, context)
+
+    elements = []
+    elements = list(chain(*map(lambda node: [*elements, VisitElement(node)], node.elements)))
+    elements = list(filter(partial(is_not, None), elements))
+    if len(elements) == 1:
+        return elements[0]
+    return elements
 def VisitIfNode(node: IfNode, context: Context):
     for condition, expression in node.cases:
         value = VisitNode(condition, context)

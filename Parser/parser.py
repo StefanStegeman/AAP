@@ -28,15 +28,6 @@ def BinaryOperation(f, acceptedTokens, tokens, index):
     """
     left, index = f(tokens, index)
 
-    # def loop(left, index):
-    #     if type(tokens[index]) not in acceptedTokens:
-    #         return left, index
-    #     operator = tokens[index]
-    #     index = IncrementIndex(tokens, index)
-    #     right, index = f(tokens, index)
-    #     left = BinaryOperationNode(left, operator, right)
-    #     return loop(left, index), index
-    # left, index = loop(left, index)
     while type(tokens[index]) in acceptedTokens:
         operator = tokens[index]
         index = IncrementIndex(tokens, index)

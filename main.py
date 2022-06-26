@@ -2,7 +2,7 @@ import sys
 from number import Number
 from lexer import Lex
 from Parser.parser import Parse
-from interpreter import VisitNode
+from interpreter import VisitNode, Function
 from context import Context, SymbolDictionary
 
 # Apes Among Programmers
@@ -11,10 +11,14 @@ def ReadFile(filename: str):
     tokens = Lex(filename=filename)
     ast = Parse(tokens, index=0)
     result = VisitNode(ast, context)
-    if len(result.elements) == 1:
-        return result.elements[0]
-    else:
-        return result.elements
+    try:
+        if len(result) == 1:
+            return result[0]
+        else:
+            result = list(filter(lambda element: type(element) != Function, result))
+            return result
+    except:
+        return result
 
 def Shell():
     while True:
