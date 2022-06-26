@@ -29,17 +29,15 @@ class IfNode:
         self.elseCase = elseCase
         
 class WhileNode:
-    def __init__(self, condition, body, shouldReturnNull) -> None:
+    def __init__(self, condition, body) -> None:
         self.condition = condition
         self.body = body
-        self.shouldReturnNull = shouldReturnNull
 
 class FunctionAssignNode:
-    def __init__(self, token, arguments, body, shouldAutoReturn):
+    def __init__(self, token, arguments, body):
         self.token = token
         self.arguments = arguments
         self.body = body
-        self.shouldAutoReturn = shouldAutoReturn
 
 class FunctionCallNode:
     def __init__(self, node, arguments):

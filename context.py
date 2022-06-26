@@ -10,6 +10,7 @@ class SymbolDictionary:
         return value
 
     def SetValue(self, name: str, value):
+        print(name)
         self.symbols[name] = value
 
     def Print(self):
@@ -19,4 +20,5 @@ class SymbolDictionary:
 class Context:
     def __init__(self, parent = None) -> None:
         self.parent = parent
+        # self.symbolDictionary = parent.symbolDictionary if parent != None else None
         self.symbolDictionary = None

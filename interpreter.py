@@ -19,22 +19,22 @@ class List:
             lst = deepcopy(self)
             for item in lst.elements:
                 if item.value == other.value:
-                    print(True)
                     lst.elements.remove(item)
                 return lst
         else:
-            raise Exception("Element needs to be a number..")
+            raise Exception(f"Element needs to be a number..")
 
     def __repr__(self) -> str:
         return f'[{", ".join([str(x) for x in self.elements])}]'
 
 class Function:
-    def __init__(self, name, arguments, body, context, shouldAutoReturn) -> None:
+    def __init__(self, name, arguments, body, context) -> None:
         self.name = name
         self.arguments = arguments
         self.body = body
         self.context = context
-        self.shouldAutoReturn = shouldAutoReturn
+        # self.context = Context(self.context)
+        # self.context.symbolDictionary = SymbolDictionary(self.context.parent.symbolDictionary)
 
     def Execute(self, arguments):
         context = Context(self.context)
@@ -43,11 +43,9 @@ class Function:
         else:
             context.symbolDictionary = SymbolDictionary(self.context.symbolDictionary)
         if len(arguments) > len(self.arguments):
-            print("Exception occured..")
-            raise Exception("Too many arguments given..")
+            raise Exception(f"Too many arguments given for {FunctionDef.value} {self.name}.. Expected {len(self.arguments)}, got {len(arguments)}")
         elif len(arguments) < len(self.arguments):
-            print("Exception occured..")
-            raise Exception("Too little arguments given..")
+            raise Exception(f"Too little arguments given for {FunctionDef.value} {self.name}.. Expected {len(self.arguments)}, got {len(arguments)}")
         
         for i in range(len(arguments)):
             name = self.arguments[i]
@@ -56,18 +54,15 @@ class Function:
             context.symbolDictionary.SetValue(name.value, value)
             
         return VisitNode(self.body, context)
-        # return Number.null if self.shouldAutoReturn else VisitNode(self.body, context)
 
 def VisitNode(node, context: Context):
     method = globals()[f'Visit{type(node).__name__}']
-    # try:
-    return method(node, context)
-    # except Exception as ex:
-    #     template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-    #     message = template.format(type(ex).__name__, ex.args)
-    #     print(message)
-
-
+    try:
+        return method(node, context)
+    except Exception as ex:
+        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+        message = template.format(type(ex).__name__, ex.args)
+        print(message)
 
 def VisitListNode(node: ListNode, context: Context):
     elements = []
@@ -106,17 +101,17 @@ def VisitVariableAccessNode(node: VariableAccessNode, context: Context):
     name = node.token.value
     value = context.symbolDictionary.GetValue(name)
     if not value:
-        Exception("No value found..")
+        raise Exception(f"No value found for '{name}'..")
     return value
 
 def VisitIfNode(node: IfNode, context: Context):
-    for condition, expression, shouldReturnNull in node.cases:
+    for condition, expression in node.cases:
         value = VisitNode(condition, context)
         if value.IsTrue():
-            return Number.null if shouldReturnNull else VisitNode(expression, context) 
+            return VisitNode(expression, context) 
     if node.elseCase:
-        expression, shouldReturnNull = node.elseCase
-        return Number.null if shouldReturnNull else VisitNode(expression, context)
+        expression = node.elseCase
+        return VisitNode(expression, context)
     return Number.null
             
 def VisitWhileNode(node: WhileNode, context: Context):
@@ -125,19 +120,18 @@ def VisitWhileNode(node: WhileNode, context: Context):
         condition = VisitNode(node.condition, context)
         if not condition.IsTrue(): break
         elements.append(VisitNode(node.body, context))
-    return Number.null if node.shouldReturnNull else List(elements, context)
+    return List(elements, context)
 
 def VisitFunctionAssignNode(node: FunctionAssignNode, context: Context):
     arguments = [name for name in node.arguments]
-    # function = Function(node.token.value, arguments, node.body, context, node.shouldAutoReturn) 
-    function = Function(node.token.value, arguments, node.body, context, True) 
+    function = Function(node.token.value, arguments, node.body, context) 
     if node.token:
         context.symbolDictionary.SetValue(node.token.value, function)
     return function
 
 def VisitFunctionCallNode(node: FunctionCallNode, context: Context):
     arguments = []
-    function = deepcopy(VisitNode(node.node, context)) #Copy nodig?
+    function = VisitNode(node.node, context) #Copy nodig?
     for argument in node.arguments:
         arguments.append(VisitNode(argument, context))
     return function.Execute(arguments)

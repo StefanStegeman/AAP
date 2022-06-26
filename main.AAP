@@ -1,6 +1,7 @@
-IF 10 >= 4 THEN 
-    MONKE John = 10 ELSE 
-        MONKE John = 5 HOME
+WIFE odd ( n )
+    IF n == 0 THEN 0 ELSE RETURN RUN even ( MONKE n = n - 1 ) HOME
 
-WIFE Claire ( a ) -> a * 10
-RUN Claire
+WIFE even ( n )
+    IF n == 0 THEN 1 ELSE RETURN RUN odd ( MONKE n = n - 1 ) HOME
+
+RUN even ( 20 )

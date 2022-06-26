@@ -23,42 +23,16 @@ def Expression(tokens, index):
     if type(tokens[index]) == Variable:
         index = IncrementIndex(tokens, index)
         if type(tokens[index]) != Identifier: 
-            print("Expected Identifier Token..")
-            raise Exception("Expected Identifier Token..")
+            raise Exception(f"Expected Identifier..")
         name = tokens[index]
         index = IncrementIndex(tokens, index)
         if type(tokens[index]) != Assign: 
-            print("Expected Assign Token..")
-            raise Exception("Expected Assign Token..")
+            raise Exception(f"Expected '{Assign.value}'..")
         index = IncrementIndex(tokens, index)
         expression, index = Expression(tokens, index)
         return VariableAssignNode(name, expression), index
 
     return BinaryOperation(Comparision, (And, Or), tokens, index)
-
-# def IfStatement(tokens, index):
-#     cases = []
-#     elseCase = None
-#     condition, index = Expression(tokens, index)
-#     if type(tokens[index]) != Then:
-#         raise Exception("Expected Then token..")
-#     index = IncrementIndex(tokens, index)
-#     expression, index = Expression(tokens, index)
-#     cases.append((condition, expression))
-
-#     while type(tokens[index]) == Elif:
-#         index = IncrementIndex(tokens, index)
-#         condition, index = Expression(tokens, index)
-#         if type(tokens[index]) != Then:
-#             raise Exception("Expected Then token..")
-#         index = IncrementIndex(tokens, index)
-#         expression, index = Expression(tokens, index)
-#         cases.append((condition, expression))    
-
-#     if type(tokens[index]) == Else:
-#         index = IncrementIndex(tokens, index)
-#         elseCase, index = Expression(tokens, index)
-#     return IfNode(cases, elseCase), index
 
 def IfB(tokens, index):
     return IfCases(Elif, tokens, index)
@@ -70,17 +44,16 @@ def IfC(tokens, index):
         if type(tokens[index]) == NewLine:
             index = IncrementIndex(tokens, index)
             statements, index = Statements(tokens, index)
-            elseCase = (statements, True)
+            elseCase = statements
 
             if type(tokens[index]) == End:
                 index = IncrementIndex(tokens, index)
             else:
                 print(f"Expected {End.value} token..")
-                raise Exception("Expected End Token..")
+                raise Exception(f"Expected {End.value} Token..")
         else:
-            # expression, index = Statement(tokens, index)
-            expression, index = Expression(tokens, index)
-            elseCase = (expression, False)
+            expression, index = Statement(tokens, index)
+            elseCase = expression
     return elseCase, index
 
 def IfBORC(tokens, index):
@@ -90,12 +63,6 @@ def IfBORC(tokens, index):
         cases, elseCase = allCases
     else:
         elseCase, index = IfC(tokens, index)
-
-    # while type(tokens[index]) == NewLine:
-    #     index = IncrementIndex(tokens, index)
-    #     if type(tokens[index]) == End:
-    #         index = IncrementIndex(tokens, index)
-    #         break
     return (cases, elseCase), index
 
 def IfCases(token, tokens, index):
@@ -116,7 +83,7 @@ def IfCases(token, tokens, index):
     if type(tokens[index]) == NewLine:
         index = IncrementIndex(tokens, index)
         statements, index = Statements(tokens, index)
-        cases.append((condition, statements, False)) 
+        cases.append((condition, statements)) 
 
         if type(tokens[index]) == End:
             index = IncrementIndex(tokens, index)
@@ -125,9 +92,9 @@ def IfCases(token, tokens, index):
             newCases, elseCase = allCases
             cases.extend(newCases)
     else:
-        # expression, index = Statement(tokens, index)
-        expression, index = Expression(tokens, index)
-        cases.append((condition, expression, False))
+        expression, index = Statement(tokens, index)
+        # expression, index = Expression(tokens, index)
+        cases.append((condition, expression))
         allCases, index = IfBORC(tokens, index)
         newCases, elseCase = allCases
         cases.extend(newCases)
@@ -149,30 +116,28 @@ def WhileLoop(tokens, index):
         body, index = Statements(tokens, index)
         if not type(tokens[index]) == End:
             print(f"Expected {End.value} token..")
-            raise Exception("Expected End Token..")
+            raise Exception(f"Expected {End.value} Token..")
         index = IncrementIndex(tokens, index)
         # return WhileNode(condition, body, True), index
-        return WhileNode(condition, body, False), index
+        return WhileNode(condition, body), index
 
     print("Before: \t",tokens[index])
     index = IncrementIndex(tokens, index) # Is Deze nodig?
     print("After: \t", tokens[index])
-    # body, index = Statement(tokens, index)
-    body, index = Expression(tokens, index)
-    return WhileNode(condition, body, False), index
+    body, index = Statement(tokens, index)
+    # body, index = Expression(tokens, index)
+    return WhileNode(condition, body), index
 
 def FunctionDefenition(tokens, index):
     if type(tokens[index]) == Identifier:
         token = tokens[index] 
         index = IncrementIndex(tokens, index)
         if type(tokens[index]) != LPar:
-            print(f"Expected {LPar.value} token..")
-            raise Exception("Expected Param token..")
+            raise Exception(f"Expected '{LPar.value}'..")
     else:
         token = None       
         if type(tokens[index]) != LPar:
-            print(f"Expected Identifier or {LPar.value} token..")
-            raise Exception("Expected Identifier or LPar token..")
+            raise Exception(f"Expected Identifier or '{LPar.value}'..")
     
     index = IncrementIndex(tokens, index)
     arguments = []
@@ -186,8 +151,7 @@ def FunctionDefenition(tokens, index):
                 arguments.append(tokens[index])
                 index = IncrementIndex(tokens, index)
             else:
-                print("Expected Identifier token..")
-                raise Exception("Expected Identifier token..")
+                raise Exception(f"Expected Identifier..")
 
         if type(tokens[index]) != RPar:
             print(f"Expected {RPar.value} token..")
@@ -201,19 +165,16 @@ def FunctionDefenition(tokens, index):
     if type(tokens[index]) == Arrow:
         index = IncrementIndex(tokens, index)
         body, index = Expression(tokens, index)
-        return FunctionAssignNode(token, arguments, body, True), index     
+        return FunctionAssignNode(token, arguments, body), index     
     if type(tokens[index]) != NewLine:
-        print(f"Expected {Arrow.value} or Newline token..")
-        raise Exception(f"Expected {Arrow.value} or Newline token..")
+        raise Exception(f"Expected {Arrow.value} or Newline after the assignment of '{FunctionAssignNode.value}' '{token}'..")
     index = IncrementIndex(tokens, index)
-    # body, index = Statements(tokens, index)
-    body, index = Expression(tokens, index)
+    body, index = Statements(tokens, index)
+    # body, index = Expression(tokens, index)
     if type(tokens[index]) != End:
-        print(f"Expected {End.value} token..")
-        raise Exception("Expected End token..")
+        raise Exception(f"Expected {End.value} Token..")
     index = IncrementIndex(tokens, index)
-    # return FunctionAssignNode(token, arguments, body, False)
-    return FunctionAssignNode(token, arguments, body, True), index  
+    return FunctionAssignNode(token, arguments, body), index  
 
 def CallFunction(tokens, index):
     factor, index = Factor(tokens, index)
@@ -274,7 +235,7 @@ def Factor(tokens, index):
     elif type(token) == While:
         return WhileLoop(tokens, index)
     elif type(token) == FunctionDef:
-        return FunctionDefenition(tokens, index)
+        return FunctionDefenition(tokens, index) 
     elif type(token) == Run:
         return CallFunction(tokens, index)
     elif type(token) == Return:
@@ -292,7 +253,7 @@ def Try(oldIndex, expression):
 def Statement(tokens, index):
     if type(tokens[index]) == Return:
         index = IncrementIndex(tokens, index)
-        expression, index = Try(index, Expression(tokens, index)) #Kijk of er een expression is
+        expression, index = Try(index, Expression(tokens, index)) 
         return ReturnNode(expression), index
     return Expression(tokens, index)
 
@@ -301,12 +262,11 @@ def Statements(tokens, index):
     while type(tokens[index]) == NewLine:
         index = IncrementIndex(tokens, index)
     
-    # statement, index = Statement(tokens, index)
-    statement, index = Expression(tokens, index)
+    statement, index = Statement(tokens, index)
     statements.append(statement)
 
     moreStatements = True
-    while True:
+    while moreStatements:
         newLine = 0
         while type(tokens[index]) == NewLine:
             index = IncrementIndex(tokens, index)
@@ -314,10 +274,8 @@ def Statements(tokens, index):
         if newLine == 0:
             moreStatements = False
         if not moreStatements: break
-        # if type(tokens[index]) == End: break
 
-        # statement, index = Try(index, Statement(tokens, index))
-        statement, index = Try(index, Expression(tokens, index))
+        statement, index = Try(index, Statement(tokens, index))
         if not statement:
             moreStatements = False
             continue
@@ -328,6 +286,7 @@ def Term(tokens, index):
     return BinaryOperation(Factor, (Multiply, Divide), tokens, index)
 
 def Parse(tokens, index):
+    print(tokens)
     statements, index = Statements(tokens, index)
     if type(tokens[index]) == EOF:
         return statements

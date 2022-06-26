@@ -3,6 +3,9 @@ class Number:
         self.value = value
         self.context = context
 
+    def __repr__(self) -> str:
+        return f'{self.value}'
+
     def __str__(self):
         return f'{self.value}'
 
