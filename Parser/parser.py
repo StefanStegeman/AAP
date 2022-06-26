@@ -2,10 +2,41 @@ from tokens import *
 from nodes import *
 
 def IncrementIndex(tokens, index):
+    """ Increment the index value when it's not out of bounds.
+    
+    Parameters:
+        tokens (Lst) : List with all the tokens.
+        index  (int) : The index.
+
+    Returns:
+        index (int)  : The incremented index.
+    """
     return index + 1 if index < len(tokens) - 1 else index
 
 def BinaryOperation(f, acceptedTokens, tokens, index):
+    """ Create BinaryOperationNode.
+    
+    Parameters:
+        f (Callable)         : Callable which is used to get the left and right nodes for.
+        acceptedTokens (Lst) : List with all the accepted tokens.
+        tokens (Lst)         : List with all the tokens.
+        index (int)          : The index.
+
+    Returns:
+        node (BinaryOperationNode) : The BinaryOperation node which has been created.
+        index (int)                : The index.  
+    """
     left, index = f(tokens, index)
+
+    # def loop(left, index):
+    #     if type(tokens[index]) not in acceptedTokens:
+    #         return left, index
+    #     operator = tokens[index]
+    #     index = IncrementIndex(tokens, index)
+    #     right, index = f(tokens, index)
+    #     left = BinaryOperationNode(left, operator, right)
+    #     return loop(left, index), index
+    # left, index = loop(left, index)
     while type(tokens[index]) in acceptedTokens:
         operator = tokens[index]
         index = IncrementIndex(tokens, index)
@@ -14,28 +45,54 @@ def BinaryOperation(f, acceptedTokens, tokens, index):
     return left, index
 
 def Arithmic(tokens, index):
+    """ Arithmic expression.
+    
+    Parameters:
+        tokens (List) : The list with all the tokens.
+        index (int)   : The index.
+    
+    Returns:
+        Node (Node) : The result of the BinaryOperation function call.
+        index (int) : The index.
+    """
     return BinaryOperation(Term, (Plus, Minus), tokens, index)
 
 def Comparision(tokens, index):
+    """ Comparison expression.
+    
+    Parameters:
+        tokens (List) : The list with all the tokens.
+        index (int)   : The index.
+    
+    Returns:
+        Node (Node) : The result of the BinaryOperation function call.
+        index (int) : The index.
+    """
     return BinaryOperation(Arithmic, (Equals, NotEquals, GreaterThan, GreaterThanEquals, LessThan, LessThanEquals), tokens, index)
 
 def Expression(tokens, index):
+    """ Expression
+    
+    Parameters:
+        tokens (List) : The list with all the tokens.
+        index (int)   : The index.
+    
+    Returns:
+        Node (VariableAssignNode) : The VariableAssignNode.
+        index (int)               : The index.
+    """
     if type(tokens[index]) == Variable:
         index = IncrementIndex(tokens, index)
         if type(tokens[index]) != Identifier: 
-            raise Exception(f"Expected Identifier..")
+            raise Exception(f"Expected Identifier token..")
         name = tokens[index]
         index = IncrementIndex(tokens, index)
         if type(tokens[index]) != Assign: 
-            raise Exception(f"Expected '{Assign.value}'..")
+            raise Exception(f"Expected '{Assign.value}' token..")
         index = IncrementIndex(tokens, index)
         expression, index = Expression(tokens, index)
         return VariableAssignNode(name, expression), index
-
     return BinaryOperation(Comparision, (And, Or), tokens, index)
-
-def IfB(tokens, index):
-    return IfCases(Elif, tokens, index)
 
 def IfC(tokens, index):
     elseCase = None
@@ -46,11 +103,11 @@ def IfC(tokens, index):
             statements, index = Statements(tokens, index)
             elseCase = statements
 
-            if type(tokens[index]) == End:
+            if type(tokens[index]) == EndIf:
                 index = IncrementIndex(tokens, index)
             else:
-                print(f"Expected {End.value} token..")
-                raise Exception(f"Expected {End.value} Token..")
+                print(f"Expected {EndIf.value} token..")
+                raise Exception(f"Expected {EndIf.value} Token..")
         else:
             expression, index = Statement(tokens, index)
             elseCase = expression
@@ -59,7 +116,7 @@ def IfC(tokens, index):
 def IfBORC(tokens, index):
     cases, elseCase = [], None
     if type(tokens[index]) == Elif:
-        allCases, index = IfB(tokens, index)
+        allCases, index = IfCases(Elif, tokens, index)
         cases, elseCase = allCases
     else:
         elseCase, index = IfC(tokens, index)
@@ -85,7 +142,7 @@ def IfCases(token, tokens, index):
         statements, index = Statements(tokens, index)
         cases.append((condition, statements)) 
 
-        if type(tokens[index]) == End:
+        if type(tokens[index]) == EndIf:
             index = IncrementIndex(tokens, index)
         else:
             allCases, index = IfBORC(tokens, index)
@@ -93,7 +150,6 @@ def IfCases(token, tokens, index):
             cases.extend(newCases)
     else:
         expression, index = Statement(tokens, index)
-        # expression, index = Expression(tokens, index)
         cases.append((condition, expression))
         allCases, index = IfBORC(tokens, index)
         newCases, elseCase = allCases
@@ -108,24 +164,17 @@ def IfStatement(tokens, index):
 def WhileLoop(tokens, index):
     condition, index = Expression(tokens, index)
     if type(tokens[index]) != Then:
-        print(f"Expected {Then.value} token..")
-        raise Exception("Expected Then token..")
+        raise Exception(f"Expected {Then.value} token..")
     index = IncrementIndex(tokens, index)
     if type(tokens[index]) == NewLine:
         index = IncrementIndex(tokens, index)
         body, index = Statements(tokens, index)
-        if not type(tokens[index]) == End:
-            print(f"Expected {End.value} token..")
-            raise Exception(f"Expected {End.value} Token..")
+        if not type(tokens[index]) == EndWhile:
+            raise Exception(f"Expected {EndWhile.value} Token..")
         index = IncrementIndex(tokens, index)
-        # return WhileNode(condition, body, True), index
         return WhileNode(condition, body), index
 
-    print("Before: \t",tokens[index])
-    index = IncrementIndex(tokens, index) # Is Deze nodig?
-    print("After: \t", tokens[index])
     body, index = Statement(tokens, index)
-    # body, index = Expression(tokens, index)
     return WhileNode(condition, body), index
 
 def FunctionDefenition(tokens, index):
@@ -170,9 +219,8 @@ def FunctionDefenition(tokens, index):
         raise Exception(f"Expected {Arrow.value} or Newline after the assignment of '{FunctionAssignNode.value}' '{token}'..")
     index = IncrementIndex(tokens, index)
     body, index = Statements(tokens, index)
-    # body, index = Expression(tokens, index)
-    if type(tokens[index]) != End:
-        raise Exception(f"Expected {End.value} Token..")
+    if type(tokens[index]) != EndFunction:
+        raise Exception(f"Expected {EndFunction.value} Token..")
     index = IncrementIndex(tokens, index)
     return FunctionAssignNode(token, arguments, body), index  
 
@@ -181,7 +229,6 @@ def CallFunction(tokens, index):
     if type(tokens[index]) == LPar:
         index = IncrementIndex(tokens, index)
         arguments = []
-
         if type(tokens[index]) == RPar:
             index = IncrementIndex(tokens, index)
         else:
@@ -199,25 +246,6 @@ def CallFunction(tokens, index):
             index = IncrementIndex(tokens, index)
         return FunctionCallNode(factor, arguments), index
     return factor, index
-
-def List(tokens, index):
-    elements = []
-    if type(tokens[index]) == ListClose:
-        index = IncrementIndex(tokens, index)
-    else:
-        expression, index = Expression(tokens, index)
-        elements.append(expression)
-
-        while type(tokens[index]) == Comma:
-            index = IncrementIndex(tokens, index)
-            expression, index = Expression(tokens, index)
-            elements.append(expression)
-
-        if type(tokens[index]) != ListClose:
-            print(f"Expected {ListClose.value} token..")
-            raise Exception("Expected ListClose token..")
-        index = IncrementIndex(tokens, index)
-    return ListNode(elements), index
 
 def Factor(tokens, index):
     token = tokens[index]
@@ -241,9 +269,6 @@ def Factor(tokens, index):
     elif type(token) == Return:
         expression, index = Expression(tokens, index)
         return ReturnNode(expression), index
-    elif type(token) == ListOpen:
-        list, index = List(tokens, index)
-        return list, index
 
 def Try(oldIndex, expression):
     if expression[0] == None:
@@ -286,7 +311,6 @@ def Term(tokens, index):
     return BinaryOperation(Factor, (Multiply, Divide), tokens, index)
 
 def Parse(tokens, index):
-    print(tokens)
     statements, index = Statements(tokens, index)
     if type(tokens[index]) == EOF:
         return statements

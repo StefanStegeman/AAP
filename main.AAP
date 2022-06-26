@@ -1,7 +1,7 @@
-WIFE odd ( n )
-    IF n == 0 THEN 0 ELSE RETURN RUN even ( MONKE n = n - 1 ) HOME
+Wife odd OpenBanane n CloseBanane
+    If n == 0 Then 0 Else Run even OpenBanane Ape n Is n - 1 CloseBanane StopWife
 
-WIFE even ( n )
-    IF n == 0 THEN 1 ELSE RETURN RUN odd ( MONKE n = n - 1 ) HOME
+Wife even OpenBanane n CloseBanane
+    If n == 0 Then 1 Else Run odd OpenBanane Ape n Is n - 1 CloseBanane StopWife
 
-RUN even ( 20 )
+Run even OpenBanane 20 CloseBanane

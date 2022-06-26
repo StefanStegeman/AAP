@@ -27,16 +27,16 @@ class Divide(Token):
     value = "/"
 
 class LPar(Token):
-    value = "("
+    value = "OpenBanane"
 
 class RPar(Token):
-    value = ")"
+    value = "CloseBanane"
 
 class EOF(Token):
     value = ""
 
 class Variable(Token):
-    value = "MONKE"
+    value = "Ape"
 
 class Comma(Token):
     value = ","
@@ -45,10 +45,10 @@ class Arrow(Token):
     value = "->"
 
 class FunctionDef(Token):
-    value = "WIFE"
+    value = "Wife"
     
 class Assign(Token):
-    value = "="
+    value = "Is"
 
 class Equals(Token):
     value = "=="
@@ -69,42 +69,42 @@ class LessThanEquals(Token):
     value = "<="
 
 class And(Token):
-    value = "AND"
+    value = "And"
 
 class Or(Token):
-    value = "OR"
+    value = "Or"
 
 class If(Token):
-    value = "IF"
+    value = "If"
 
 class Elif(Token):
-    value = "ELIF"
+    value = "Elif"
 
 class Else(Token):
-    value = "ELSE"
+    value = "Else"
 
 class Then(Token):
-    value = "THEN"
+    value = "Then"
 
 class While(Token):
-    value = "WHILE"
+    value = "SpinWhile"
 
 class Run(Token):
-    value = "RUN"
+    value = "Run"
 
 class Return(Token):
-    value = "RETURN"
-
-class ListOpen(Token):
-    value = "["
-
-class ListClose(Token):
-    value = "]"
+    value = "Throw"
 
 class NewLine(Token):
     value = "\n"
 
-class End(Token):
-    value = "HOME"
+class EndFunction(Token):
+    value = "StopWife"
 
-TokenValues = {Plus.value: Plus, Minus.value: Minus, Multiply.value: Multiply, Divide.value: Divide, LPar.value: LPar, RPar.value: RPar, Assign.value: Assign, Variable.value: Variable, Equals.value: Equals, NotEquals.value: NotEquals, GreaterThan.value: GreaterThan, GreaterThanEquals.value: GreaterThanEquals, LessThan.value: LessThan, LessThanEquals.value: LessThanEquals, And.value: And, Or.value: Or, If.value: If, Elif.value: Elif, Else.value: Else, Then.value: Then, While.value: While, Comma.value: Comma, FunctionDef.value: FunctionDef, Arrow.value: Arrow, Run.value : Run, Return.value: Return, ListOpen.value: ListOpen, ListClose.value: ListClose, NewLine.value: NewLine, End.value: End}
+class EndIf(Token):
+    value = "StopIf"
+
+class EndWhile(Token):
+    value = "StopSpinning"
+
+TokenValues = {Plus.value: Plus, Minus.value: Minus, Multiply.value: Multiply, Divide.value: Divide, LPar.value: LPar, RPar.value: RPar, Assign.value: Assign, Variable.value: Variable, Equals.value: Equals, NotEquals.value: NotEquals, GreaterThan.value: GreaterThan, GreaterThanEquals.value: GreaterThanEquals, LessThan.value: LessThan, LessThanEquals.value: LessThanEquals, And.value: And, Or.value: Or, If.value: If, Elif.value: Elif, Else.value: Else, Then.value: Then, While.value: While, Comma.value: Comma, FunctionDef.value: FunctionDef, Arrow.value: Arrow, Run.value : Run, Return.value: Return, NewLine.value: NewLine, EndFunction.value : EndFunction, EndIf.value : EndIf, EndWhile.value : EndWhile}

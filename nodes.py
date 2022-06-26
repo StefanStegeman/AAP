@@ -1,12 +1,28 @@
+from ast import NotEq
+from tokens import *
+from typing import Union
+
 class NumberNode:
-    def __init__(self, token) -> None:
+    """ Store a Number value in this Node."""
+    def __init__(self, token: Union[Int, Float]) -> None:
+        """ Assign the token which contains the number value. 
+        
+        Parameters:
+            token (Int, Float) : The toen which contains the number value.
+        """
         self.token = token
     
-    def __repr__(self):
+    def __str__(self):
+        """ Represent token as string. """
         return f'{self.token}'
 
+class VariableAccessNode:
+    def __init__(self, token: Union[Int, Float]) -> None:
+        self.token = token
+
 class BinaryOperationNode:
-    def __init__(self, left, operator, right) -> None:
+    """ Store the nodes and operator token needed for a binary operation in this Node. """
+    def __init__(self, left: Union[VariableAccessNode, NumberNode], operator: 'OperatorTokens', right: Union[VariableAccessNode, NumberNode]) -> None:
         self.left = left
         self.operator = operator
         self.right = right
@@ -15,13 +31,10 @@ class BinaryOperationNode:
         return f'({self.left}, {self.operator}, {self.right})'
 
 class VariableAssignNode:
-    def __init__(self, token, node) -> None:
+    def __init__(self, token: Identifier, node: Union[VariableAccessNode, NumberNode]) -> None:
         self.token = token
         self.node = node
 
-class VariableAccessNode:
-    def __init__(self, token: str) -> None:
-        self.token = token
 
 class IfNode:
     def __init__(self, cases, elseCase) -> None:
@@ -29,7 +42,7 @@ class IfNode:
         self.elseCase = elseCase
         
 class WhileNode:
-    def __init__(self, condition, body) -> None:
+    def __init__(self, condition: VariableAccessNode, body) -> None:
         self.condition = condition
         self.body = body
 
@@ -44,10 +57,6 @@ class FunctionCallNode:
         self.node = node
         self.arguments = arguments
 
-class ReturnNode:
-    def __init__(self, node):
-        self.node = node
-
 class ListNode:
     def __init__(self, elements) -> None:
         self.elements = elements
@@ -55,3 +64,5 @@ class ListNode:
 class ReturnNode:
     def __init__(self, node) -> None:
         self.node = node
+
+OperatorTokens = Union[Plus, Minus, Divide, Multiply, Equals, NotEquals, GreaterThan, GreaterThanEquals, LessThan, LessThanEquals, And, Or]

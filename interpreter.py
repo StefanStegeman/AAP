@@ -2,30 +2,16 @@ from nodes import *
 from number import Number
 from tokens import *
 from context import Context, SymbolDictionary
-from copy import deepcopy
+from itertools import chain
+
 
 class List:
     def __init__(self, elements, context = None) -> None:
         self.elements = elements
         self.context = context
 
-    def Plus(self, other):
-        lst = deepcopy(self)
-        lst.elements.append(other)
-        return lst
-
-    def Minus(self, other):
-        if isinstance(other, Number):
-            lst = deepcopy(self)
-            for item in lst.elements:
-                if item.value == other.value:
-                    lst.elements.remove(item)
-                return lst
-        else:
-            raise Exception(f"Element needs to be a number..")
-
     def __repr__(self) -> str:
-        return f'[{", ".join([str(x) for x in self.elements])}]'
+        return f'{self.elements}'
 
 class Function:
     def __init__(self, name, arguments, body, context) -> None:
@@ -33,15 +19,10 @@ class Function:
         self.arguments = arguments
         self.body = body
         self.context = context
-        # self.context = Context(self.context)
-        # self.context.symbolDictionary = SymbolDictionary(self.context.parent.symbolDictionary)
 
     def Execute(self, arguments):
         context = Context(self.context)
-        if self.context.parent:
-            context.symbolDictionary = SymbolDictionary(self.context.parent.symbolDictionary)
-        else:
-            context.symbolDictionary = SymbolDictionary(self.context.symbolDictionary)
+        context.symbolDictionary = SymbolDictionary(self.context.symbolDictionary)
         if len(arguments) > len(self.arguments):
             raise Exception(f"Too many arguments given for {FunctionDef.value} {self.name}.. Expected {len(self.arguments)}, got {len(arguments)}")
         elif len(arguments) < len(self.arguments):
@@ -52,7 +33,6 @@ class Function:
             value = arguments[i]
             value.context = context
             context.symbolDictionary.SetValue(name.value, value)
-            
         return VisitNode(self.body, context)
 
 def VisitNode(node, context: Context):
@@ -76,13 +56,10 @@ def VisitNumberNode(node: NumberNode, context: Context):
 def VisitReturnNode(node: ReturnNode, context: Context):
     if node.node:
         return VisitNode(node.node, context)
-    else:
-        return Number.null
 
 def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context):
     left = VisitNode(node.left, context)
     right = VisitNode(node.right, context)
-
     method = getattr(left, f'{type(node.operator).__name__}')
     try:
         return method(right)
@@ -113,25 +90,22 @@ def VisitIfNode(node: IfNode, context: Context):
         expression = node.elseCase
         return VisitNode(expression, context)
     return Number.null
-            
-def VisitWhileNode(node: WhileNode, context: Context):
-    elements = []
-    while True:
-        condition = VisitNode(node.condition, context)
-        if not condition.IsTrue(): break
-        elements.append(VisitNode(node.body, context))
-    return List(elements, context)
+
+def VisitWhileNode(node: WhileNode, context: Context, elements: List = []):
+    condition = VisitNode(node.condition, context)
+    if not condition.IsTrue():
+        return List(elements, context)
+    elements.append(VisitNode(node.body, context))
+    return VisitWhileNode(node, context, elements)
 
 def VisitFunctionAssignNode(node: FunctionAssignNode, context: Context):
-    arguments = [name for name in node.arguments]
-    function = Function(node.token.value, arguments, node.body, context) 
+    function = Function(node.token.value, node.arguments, node.body, context) 
     if node.token:
         context.symbolDictionary.SetValue(node.token.value, function)
     return function
 
 def VisitFunctionCallNode(node: FunctionCallNode, context: Context):
-    arguments = []
-    function = VisitNode(node.node, context) #Copy nodig?
-    for argument in node.arguments:
-        arguments.append(VisitNode(argument, context))
+    arguments = [] 
+    function = VisitNode(node.node, context)
+    arguments = list(chain(*map(lambda node: [*arguments, VisitNode(node, context)], node.arguments)))
     return function.Execute(arguments)

@@ -14,11 +14,11 @@ def ReadFile(filename: str):
     if len(result.elements) == 1:
         return result.elements[0]
     else:
-        return result.elements[-1]
+        return result.elements
 
 def Shell():
     while True:
-        text = input('Do talk here> ')
+        text = input('Speak up ape> ')
         if text.strip() == "": 
             continue
         tokens = Lex(text=[text])
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     symbols.SetValue("TRUE", Number.true)
     symbols.SetValue("FALSE", Number.false)
 
-    ReadFile("main.AAP")
+    print(ReadFile("main.AAP"))
     # if len(sys.argv) == 2:
     #     print(ReadFile(sys.argv[1]))
     # else:
