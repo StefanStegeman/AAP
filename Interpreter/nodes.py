@@ -99,7 +99,6 @@ class FunctionCallNode:
         self.node = node
         self.arguments = arguments
 
-
 class ReturnNode:
     def __init__(self, node) -> None:
         """ Initialize the ReturnNode. 
