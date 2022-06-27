@@ -1,13 +1,18 @@
-from nodes import *
-from number import Number
-from tokens import *
-from context import Context, SymbolDictionary
+import functools
+from Interpreter.nodes import *
+from Interpreter.number import Number
+from Interpreter.tokens import *
+from Interpreter.nodes import *
+from Interpreter.context import Context, SymbolDictionary
+from typing import Callable
 from itertools import chain
 from functools import reduce, partial
 from operator import add, is_not
 
 class List:
-    def __init__(self, elements, context = None) -> None:
+    """ List class which stores the elements of the list and the corresponding context. """
+    def __init__(self, elements, context: Context = None) -> None:
+        """ Initialize the elements and the corresponding context."""
         self.elements = elements
         self.context = context
 
@@ -15,28 +20,45 @@ class List:
         return f'{self.elements}'
 
 class Function:
+    """ Function class which makes it easier to execute a function."""
     def __init__(self, name, arguments, body, context) -> None:
+        """ Initialize the function class. 
+        Parameters:
+            name (str)        : The name of the function. 
+            arguments (Lst)   : The arguments for the function.
+            body (Node)       : The body of the function in the form of a Node.
+            context (context) : The context for the function.
+        """
         self.name = name
         self.arguments = arguments
         self.body = body
         self.context = context
 
     def Execute(self, arguments):
+        """ Execute the function's body. 
+        
+        Parameters:
+            arguments (Lst) : The arguments passed into the function.
+        """
         context = Context(self.context)
         context.symbolDictionary = SymbolDictionary(self.context.symbolDictionary)
         if len(arguments) > len(self.arguments):
             raise Exception(f"Too many arguments given for {FunctionDef.value} {self.name}.. Expected {len(self.arguments)}, got {len(arguments)}")
         elif len(arguments) < len(self.arguments):
             raise Exception(f"Too little arguments given for {FunctionDef.value} {self.name}.. Expected {len(self.arguments)}, got {len(arguments)}")
-        
-        for i in range(len(arguments)):
-            name = self.arguments[i]
-            value = arguments[i]
-            value.context = context
-            context.symbolDictionary.SetValue(name.value, value)
+
+        def SetArguments(index, localContext):
+            if index < len(arguments):
+                name = self.arguments[index]
+                value = arguments[index]
+                value.context = localContext
+                localContext.symbolDictionary.SetValue(name.value, value)
+                return SetArguments(index + 1, localContext) 
+            return localContext
+        context = SetArguments(0, context)
         return VisitNode(self.body, context)
 
-def VisitNode(node, context: Context):
+def VisitNode(node: 'AllNodes', context: Context):
     method = globals()[f'Visit{type(node).__name__}']
     try:
         return method(node, context)
@@ -93,6 +115,7 @@ def VisitListNode(node: ListNode, context: Context):
     if len(elements) == 1:
         return elements[0]
     return elements
+
 def VisitIfNode(node: IfNode, context: Context):
     for condition, expression in node.cases:
         value = VisitNode(condition, context)
@@ -121,3 +144,5 @@ def VisitFunctionCallNode(node: FunctionCallNode, context: Context):
     function = VisitNode(node.node, context)
     arguments = list(chain(*map(lambda node: [*arguments, VisitNode(node, context)], node.arguments)))
     return function.Execute(arguments)
+
+AllNodes = [NumberNode, VariableAccessNode, BinaryOperationNode, VariableAccessNode, VariableAssignNode, IfNode, WhileNode, FunctionAssignNode, FunctionCallNode, ListNode, ReturnNode]

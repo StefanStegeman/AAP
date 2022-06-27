@@ -1,5 +1,13 @@
-from tokens import *
-from nodes import *
+from Interpreter.tokens import *
+from Interpreter.nodes import *
+
+# def IgnoreDecorator(f):
+def Ignore(tokens, index, token):
+    if type(tokens[index]) == token:
+        index = IncrementIndex(tokens, index)
+        return Ignore(tokens, index, token)
+    else:
+        return tokens, index
 
 def IncrementIndex(tokens, index):
     """ Increment the index value when it's not out of bounds.
@@ -28,12 +36,16 @@ def BinaryOperation(f, acceptedTokens, tokens, index):
     """
     left, index = f(tokens, index)
 
-    while type(tokens[index]) in acceptedTokens:
-        operator = tokens[index]
-        index = IncrementIndex(tokens, index)
-        right, index = f(tokens, index)
-        left = BinaryOperationNode(left, operator, right)
-    return left, index
+    def func(lhs, i):
+        if type(tokens[i]) in acceptedTokens:
+            operator = tokens[i]
+            i = IncrementIndex(tokens, i)
+            right, i = f(tokens, i)
+            lhs = BinaryOperationNode(lhs, operator, right)
+            return func(lhs, i)
+        else:
+            return lhs, i
+    return func(left, index)
 
 def Arithmic(tokens, index):
     """ Arithmic expression.
@@ -185,13 +197,18 @@ def FunctionDefenition(tokens, index):
         arguments.append(tokens[index]) 
         index = IncrementIndex(tokens, index)
 
-        while type(tokens[index]) == Comma:
-            index = IncrementIndex(tokens, index)
-            if type(tokens[index]) == Identifier:
-                arguments.append(tokens[index])
-                index = IncrementIndex(tokens, index)
-            else:
-                raise Exception(f"Expected Identifier..")
+        def SetParameters(tokenList, i):
+            if type(tokenList[i]) == Comma:
+                i = IncrementIndex(tokenList, i)
+                if type(tokenList[i]) == Identifier:
+                    arguments.append(tokenList[i])
+                    i = IncrementIndex(tokenList, i)
+                else:
+                    raise Exception(f"Expected Identifier..")
+                return SetParameters()
+            return
+            
+        SetParameters(tokens, index)  
 
         if type(tokens[index]) != RPar:
             print(f"Expected {RPar.value} token..")
@@ -226,11 +243,14 @@ def CallFunction(tokens, index):
             expression, index = Expression(tokens, index)
             arguments.append(expression)
 
-            while type(tokens[index]) == Comma:
-                index = IncrementIndex(tokens, index)
-                expression, index = Expression(tokens, index)
-                arguments.append(expression)
-
+            def SetArguments(tokenList, i, args):
+                if type(tokens[index]) == Comma:
+                    i = IncrementIndex(tokenList, i)
+                    epxr, i = Expression(tokenList, i)
+                    args.append(expr)
+                    return SetArguments(tokenList, i, args)
+                return
+                
             if type(tokens[index]) != RPar:
                 print("Expected RPar token..")
                 raise Exception("Expected RPar token..")

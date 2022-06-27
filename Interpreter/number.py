@@ -1,10 +1,10 @@
 from typing import Union
-from context import Context
+from Interpreter.context import Context
 
 class Number:
     """ The Number class contains all data and all the functions which can be applied to a number. """
 
-    def __init__(self, value: Union[int, float], context: Context = None):
+    def __init__(self, value: Union[int, float], context: Context = None) -> None:
         """ Store the passed value and context. 
         
         Parameters:
@@ -17,7 +17,7 @@ class Number:
     def __repr__(self) -> str:
         return f'{self.value}'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.value}'
 
     def Plus(self, other):
@@ -152,7 +152,7 @@ class Number:
         """
         return Number(int(self.value or other.value), self.context)
 
-    def IsTrue(self):
+    def IsTrue(self) -> bool:
         """ This function checks whether self.value is true. 
         
         Returns:

@@ -1,13 +1,24 @@
 import sys
-from number import Number
-from lexer import Lex
-from Parser.parser import Parse
-from interpreter import VisitNode, Function
-from context import Context, SymbolDictionary
-
+from Interpreter.number import Number
+from Interpreter.lexer import Lex
+from Interpreter.parser import Parse
+from Interpreter.interpreter import VisitNode, Function
+from Interpreter.context import Context, SymbolDictionary
+from typing import List
 # Apes Among Programmers
 
-def ReadFile(filename: str):
+def RunFile(filename: str) -> List[int]:
+    """ Run and interpret an .AAP file.
+    This contains three steps:
+        - Create tokens with the Lexer.
+        - Create an AST from the tokens with the Parser.
+        - Interpret the AST with the Interpreter.
+    Parameters:
+        filename (str) : The name of the file which needs to be interpreted.
+
+    Returns:
+        result (Lst)   : List filled with all returned values.
+    """
     tokens = Lex(filename=filename)
     ast = Parse(tokens, index=0)
     result = VisitNode(ast, context)
@@ -20,7 +31,10 @@ def ReadFile(filename: str):
     except:
         return result
 
-def Shell():
+def Shell() -> None:
+    """ Run the AAP shell. 
+    Run the AAP shell which allows you to program in AAP inside of a terminal shell.
+    """
     while True:
         text = input('Speak up ape> ')
         if text.strip() == "": 
@@ -42,8 +56,8 @@ if __name__ == '__main__':
     symbols.SetValue("TRUE", Number.true)
     symbols.SetValue("FALSE", Number.false)
 
-    print(ReadFile("main.AAP"))
+    print(RunFile("main.AAP"))
     # if len(sys.argv) == 2:
-    #     print(ReadFile(sys.argv[1]))
+    #     print(RunFile(sys.argv[1]))
     # else:
     #     Shell()
