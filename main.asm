@@ -1,24 +1,20 @@
 .cpu cortex-m0
 .text
 .align 2
-.global fibbo
+.global sommig
 
-fibbo:
-	PUSH 	{ LR }
-	MOVS	R1, #1
-	LSR 	R2, R0, #31
-	ASR 	R3, R1, #31
-	CMP 	R1, R0
-	ADC 	R2, R2, R3
-	CMP 	R2, #1
-	BNE 	.L2
-	B   	.L4
-.L2:
-	MOVS	R1, #1
-	SUB 	R0, R1
-	BL  	fibbo
+sommig:
+	PUSH 	{ R4, LR }
+	MOVS	R1, #0
+LOOP:
 	MOVS	R2, #1
-	SUB 	R0, R2
-	BL  	fibbo
-.L4:
-	POP 	{ PC }
+	ASR 	R3, R0, #31
+	LSR 	R4, R2, #31
+	CMP 	R0, R2
+	ADC 	R3, R3, R4
+	ADD 	R1, R0
+	MOVS	R4, #1
+	SUB 	R0, R4
+END:
+	MOVS	R0, R1
+	POP 	{ R4, PC }

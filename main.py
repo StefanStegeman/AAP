@@ -3,10 +3,12 @@ from Compiler.number import Number
 from Interpreter.context import Context, SymbolDictionary
 from Interpreter.interpreter import VisitNode
 from Interpreter.lexer import Lex
+from Interpreter.number import Number
 from Interpreter.parser import Parse
 from Interpreter.nodes import *
-import sys
 from typing import List
+import Interpreter.function
+import sys
 
 def InterpretFile(filename: str) -> List[Number]:
     """ Read and interpret a .AAP file.
@@ -24,7 +26,15 @@ def InterpretFile(filename: str) -> List[Number]:
     tokens = Lex(filename=filename)
     ast = Parse(tokens, index=0)
     result = VisitNode(ast, context)
-    return result
+    try:
+        if len(result) > 1:
+            result = list(filter(lambda element: type(element) != Interpreter.function.Function, result))
+            if len(result) > 0:
+                print(result)
+    except:
+        if type(result) == Interpreter.function.Function:
+            return
+        print(result)
 
 def CompileFile(input: str, output: str) -> None:
     """ Read and compile a .AAP file.
@@ -40,7 +50,7 @@ def CompileFile(input: str, output: str) -> None:
     """
     tokens = Lex(filename=input)
     ast = Parse(tokens, index=0)
-    print(VisitNode(ast, context))
+    VisitNode(ast, context)
     node = ast.elements[0]
     Compile(output, node, ast)
 
@@ -50,9 +60,9 @@ if __name__ == '__main__':
     context.symbolDictionary = symbols
 
     if len(sys.argv) == 2:
-        print(InterpretFile(sys.argv[1]))
+        InterpretFile(sys.argv[1])
     elif len(sys.argv) == 3:
         CompileFile(sys.argv[1], sys.argv[2])
     else:
-        print("Expected atleast an inputfile.\n")
-        print(InterpretFile("main.AAP"))
+        CompileFile("main.AAP", "main.asm")
+        print("I need an input file to do anything..")

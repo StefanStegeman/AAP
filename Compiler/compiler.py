@@ -7,6 +7,7 @@ from Interpreter.nodes import *
 from itertools import chain
 from operator import is_not, add
 from typing import List, Tuple
+import traceback
 
 def Compile(filename: str, FunctionDefenitionNode: FunctionDefenitionNode, ast: ListNode) -> None:
     """ Compile the given function and write it to a file. 
@@ -60,6 +61,7 @@ def VisitNode(node: 'AllNodes', context: Context, instructions: List[Union[str, 
         template = "An exception of type {0} occurred. Arguments:\n{1!r}"
         message = template.format(type(exception).__name__, exception.args)
         print(message)
+        print(traceback.format_exc())
 
 def VisitNumberNode(node: NumberNode, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
     """ Compile a NumberNode. 
@@ -168,8 +170,15 @@ def VisitListNode(node: ListNode, context: Context, instructions: List[Union[str
     """
     returnNodes = map(lambda element: ReturnNode == type(element), node.elements)
     returns = reduce(add, returnNodes, 0)
-    print(returns)
-    def VisitElement(element):
+    def VisitElement(element: 'Node') -> Union[FunctionCallNode, List[Number], Number]:
+        """ Visit element from ListNode.
+        Haskell:
+            VisitElement :: Node -> Tuple
+        Parameters:
+            element (Node): An element from the ListNode.
+        Returns:
+            number (FunctionCallNode, Number): The result of compiling the element.
+        """
         if not returns:
             return VisitNode(element, context, instructions)
         if type(element) == ReturnNode:
@@ -179,6 +188,8 @@ def VisitListNode(node: ListNode, context: Context, instructions: List[Union[str
     elements = []
     elements = list(chain(*map(lambda node: [*elements, VisitElement(node)], node.elements)))
     elements = list(filter(partial(is_not, None), elements))
+    # if len(elements) > 0:
+    #     elements, dummyInstructions = map(list, zip(*elements))
     if len(elements) == 1:
         return elements[0], instructions
     return elements, instructions
@@ -232,6 +243,7 @@ def VisitWhileNode(node: WhileNode, context: Context, instructions: List[Union[s
     """
     instructions.append("LOOP:\n")
     condition, instructions = VisitNode(node.condition, context, instructions)
+    # instructions = VisitNode(node.body, context, instructions)[1]
     instructions = VisitNode(node.body, context, instructions)
     instructions.append(f"\tCMP \t{condition.register}, #1\n")
     instructions.append(f"\tBEQ \tLOOP\n")
@@ -269,6 +281,8 @@ def VisitFunctionCallNode(node: FunctionCallNode, context: Context, instructions
     """
     arguments = [] 
     arguments, instructions = list(chain(*map(lambda node: [*arguments, VisitNode(node, context, instructions)], node.arguments)))
+    # i = 2
+    # print(i)
     instructions.append(f"\tBL  \t{node.node.token.value}\n")
     return instructions
 

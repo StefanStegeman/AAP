@@ -1,6 +1,5 @@
 from typing import Union, Tuple, List
 from Compiler.context import Context
-from Compiler.number import Number
 
 class Number:
     def __init__(self, value: Union[int, float], context: Context, register: str) -> None:
@@ -20,7 +19,7 @@ class Number:
         """ Represents self.value as a string. """
         return f'{self.value}'
 
-    def Plus(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def Plus(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function adds other.value with self.value.
         Haskell:
             Plus :: Number -> Context -> [String & Set] -> Tuple
@@ -34,7 +33,7 @@ class Number:
         instructions.append(f"\tADD \t{self.register}, {other.register}\n")
         return Number(self.value + other.value, self.context, self.register), instructions
 
-    def Minus(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def Minus(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function subtracts other.value with self.value. 
         Haskell:
             Minus :: Number -> Context -> [String & Set] -> Tuple
@@ -48,7 +47,7 @@ class Number:
         instructions.append(f"\tSUB \t{self.register}, {other.register}\n")
         return Number(self.value - other.value, self.context, self.register), instructions
 
-    def Multiply(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def Multiply(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function multiplies self.value with other.value. 
         Haskell:
             Multiply :: Number -> Context -> [String & Set] -> Tuple
@@ -62,7 +61,7 @@ class Number:
         instructions.append(f"\tMUL \t{self.register}, {other.register}\n")
         return Number(self.value * other.value, self.context, self.register), instructions
 
-    def Divide(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def Divide(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function divides self.value with other.value. 
         Haskell:
             Divide :: Number -> Context -> [String & Set] -> Tuple
@@ -85,7 +84,7 @@ class Number:
             return Number(self.value / 1, self.lineNumber, context, resultRegister), instructions
         return Number(self.value / other.value, context, resultRegister), instructions
 
-    def Equals(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def Equals(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function checks whether self.value is equal compared with other.value.
         Haskell:
             Equals :: Number -> Context -> [String & Set] -> Tuple 
@@ -104,7 +103,7 @@ class Number:
         instructions.append(f"\tADC \t{resultRegister}, {resultRegister}, {tempRegister}\n")
         return Number(int(self.value == other.value), self.context, resultRegister), instructions
     
-    def NotEquals(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def NotEquals(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function checks whether self.value is not equal compared to other.value. 
         Haskell:
             NotEquals :: Number -> Context -> [String & Set] -> Tuple
@@ -123,7 +122,7 @@ class Number:
         instructions.append(f"\tSBC \t{resultRegister}, {resultRegister}, {tempRegister}\n")
         return Number(int(self.value != other.value), self.context, resultRegister), instructions
 
-    def GreaterThan(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def GreaterThan(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function checks whether self.value is greater than other.value. 
         Haskell:
             GreaterThan :: Number -> Context -> [String & Set] -> Tuple
@@ -143,7 +142,7 @@ class Number:
         instructions.append(f"\tMOVS\t{resultRegister}, #0\n")
         return Number(int(self.value > other.value), self.context, resultRegister), instructions
 
-    def GreaterThanEquals(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def GreaterThanEquals(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function checks whether self.value is greater than or equal to other.value. 
         Haskell:
             GreaterThanEquals :: Number -> Context -> [String & Set] -> Tuple
@@ -163,7 +162,7 @@ class Number:
         instructions.append(f"\tADC \t{resultRegister}, {resultRegister}, {tempRegister}\n")
         return Number(int(self.value >= other.value), self.context, resultRegister), instructions
 
-    def LessThan(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def LessThan(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function checks whether self.value is less than other.value. 
         Haskell:
             LessThan :: Number -> Context -> [String & Set] -> Tuple
@@ -184,7 +183,7 @@ class Number:
         instructions.append(f"{label}:\n")
         return Number(int(self.value < other.value), self,context, resultRegister), instructions
 
-    def LessThanEquals(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def LessThanEquals(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function checks whether self.value is less than or equal to other.value. 
         Haskell:
             LessThanEquals :: Number -> Context -> [String & Set] -> Tuple
@@ -204,7 +203,7 @@ class Number:
         instructions.append(f"\tADC \t{resultRegister}, {resultRegister}, {tempRegister}\n")
         return Number(int(self.value <= other.value), self.context, resultRegister), instructions
 
-    def And(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def And(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function checks whether self.value and other.value are true. 
         Haskell:
             And :: Number -> Context -> [String & Set] -> Tuple
@@ -227,7 +226,7 @@ class Number:
         instructions.append(f"\tLSR \t{resultRegister}, {resultRegister}, #31\n")
         return Number(int(self.value and other.value), self.context, resultRegister), instructions
 
-    def Or(self, other: Number, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    def Or(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> Tuple['Number', List[Union[str, set]]]:
         """ This function checks whether self.value or other.value are true.
         Haskell:
             Or :: Number -> Context -> [String & Set] -> Tuple 
