@@ -1,9 +1,12 @@
 from Interpreter import interpreter
 from Interpreter.context import Context, SymbolDictionary
+from Interpreter.nodes import ListNode
+from Interpreter.number import Number
 from Interpreter.tokens import *
+from typing import List
 
 class Function:
-    def __init__(self, name, arguments, body, context) -> None:
+    def __init__(self, name: str, arguments: List[Identifier], body: ListNode, context: Context) -> None:
         """ Initialize the function class. 
         Parameters:
             name (str)        : The name of the function. 
@@ -16,11 +19,12 @@ class Function:
         self.body = body
         self.context = context
 
-    def Execute(self, arguments):
+    def Execute(self, arguments: List[Number]) -> Number:
         """ Execute the function's body. 
-        
         Parameters:
-            arguments (Lst) : The arguments passed into the function.
+            arguments (Lst): The arguments passed into the function.
+        Returns:
+            number (Number): The result of executing the function's body.
         """
         context = Context(self.context)
         context.symbolDictionary = SymbolDictionary(self.context.symbolDictionary)
