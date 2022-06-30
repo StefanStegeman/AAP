@@ -6,47 +6,47 @@ from Interpreter.parser import Parse
 import sys
 from typing import List
 
-def RunFile(filename: str) -> List[int]:
-    """ Run and interpret an .AAP file.
+def InterpretFile(filename: str) -> List[int]:
+    """ Read and interpret a .AAP file.
     This contains three steps:
         - Create tokens with the Lexer.
         - Create an AST from the tokens with the Parser.
         - Interpret the AST with the Interpreter.
     Parameters:
-        filename (str) : The name of the file which needs to be interpreted.
-
+        filename (str): The name of the file which needs to be interpreted.
     Returns:
-        result (Lst)   : List filled with all returned values.
+        result (Lst): List filled with all returned values.
     """
     tokens = Lex(filename=filename)
     ast = Parse(tokens, index=0)
     result = VisitNode(ast, context)
-    # result = list(filter(lambda element: type(element) != Function, result))
     return result
-    # try:
-    #     if len(result) == 1:
-    #         return result[0]
-    #     else:
-    # except:
-    #     return result
 
-def CompileFile(inputFilename, outputFilename):
-    tokens = Lex(filename=inputFilename)
-    ast = Parse(tokens, 0)
+def CompileFile(input: str, output: str) -> None:
+    """ Read and compile a .AAP file.
+    This contains three steps:
+        - Create tokens with the Lexer.
+        - Create an AST from the tokens with the Parser.
+        - Compile the AST with the Compiler.
+    Parameters:
+        input (str): The name of the file which needs to be interpreted.
+        output (str): The name of the file where the assembler code will be written to.
+    """
+    tokens = Lex(filename=input)
+    ast = Parse(tokens, index=0)
     print(VisitNode(ast, context))
     node = ast.elements[0]
-    Compile(outputFilename, node, ast)
+    Compile(output, node, ast)
 
 if __name__ == '__main__':
     symbols = SymbolDictionary()
     context = Context()
     context.symbolDictionary = symbols
 
-    # Compile(sys.argv[1], sys.argv[2])
     if len(sys.argv) == 2:
-        print(RunFile(sys.argv[1]))
+        print(InterpretFile(sys.argv[1]))
     elif len(sys.argv) == 3:
-        print(CompileFile(sys.argv[1], sys.argv[2]))
+        CompileFile(sys.argv[1], sys.argv[2])
     else:
-        # CompileFile("main.AAP", "yoghurt.asm")
-        exit(-1)
+        print(InterpretFile("main.AAP"))
+        # exit(-1)

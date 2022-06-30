@@ -3,7 +3,7 @@ from Interpreter.context import Context
 
 class Number:
     def __init__(self, value: Union[int, float], context: Context = None) -> None:
-        """ Store the passed value and context. 
+        """ Initialize the passed value and context. 
         Parameters:
             value (int, float): The value for the number.
             context (Context): The existing context.
@@ -15,12 +15,16 @@ class Number:
         """ Represents self.value as a string. """
         return f'{self.value}'
 
+    def __repr__(self) -> str:
+        """ Represents self.value as a string. """
+        return f'{self.value}'
+
     def Plus(self, other: 'Number') -> 'Number':
         """ This function adds other.value with self.value. 
         Parameters:
             other (Number): The other number to add with.
         Returns:
-            number (Number): The result of the operation as a new Number.
+            number (Number): The result of the operation.
         """
         return Number(self.value + other.value, self.context)
 
@@ -29,7 +33,7 @@ class Number:
         Parameters:
             other (Number): The other number to subtract with.
         Returns:
-            number (Number): The result of the operation as a new Number.
+            number (Number): The result of the operation.
         """
         return Number(self.value - other.value, self.context)
 
@@ -38,7 +42,7 @@ class Number:
         Parameters:
             other (Number): The other number to multiply with.
         Returns:
-            number (Number): The result of the operation as a new Number.
+            number (Number): The result of the operation.
         """
         return Number(self.value * other.value, self.context)
 
@@ -47,7 +51,7 @@ class Number:
         Parameters:
             other (Number): The other number to divide with.
         Returns:
-            number (Number): The result of the operation as a new Number.
+            number (Number): The result of the operation.
         """
         return Number(self.value / other.value, self.context)
 
@@ -56,7 +60,7 @@ class Number:
         Parameters:
             other (Number): The other number to compare with.
         Returns:
-            number (Number): The result of the operation as a new Number. This can be either 1 (true) or 0 (false)
+            number (Number): The result of the operation. This can be either 1 (true) or 0 (false)
         """
         return Number(int(self.value == other.value), self.context)
     
@@ -65,7 +69,7 @@ class Number:
         Parameters:
             other (Number): The other number to compare with.
         Returns:
-            number (Number): The result of the operation as a new Number. This can be either 1 (true) or 0 (false)
+            number (Number): The result of the operation. This can be either 1 (true) or 0 (false)
         """
         return Number(int(self.value != other.value), self.context)
 
@@ -74,7 +78,7 @@ class Number:
         Parameters:
             other (Number): The other number to compare with.
         Returns:
-            number (Number): The result of the operation as a new Number. This can be either 1 (true) or 0 (false)
+            number (Number): The result of the operation. This can be either 1 (true) or 0 (false)
         """
         return Number(int(self.value > other.value), self.context)
 
@@ -83,7 +87,7 @@ class Number:
         Parameters:
             other (Number): The other number to compare with.
         Returns:
-            number (Number): The result of the operation as a new Number. This can be either 1 (true) or 0 (false)
+            number (Number): The result of the operation. This can be either 1 (true) or 0 (false)
         """
         return Number(int(self.value >= other.value), self.context)
 
@@ -92,7 +96,7 @@ class Number:
         Parameters:
             other (Number): The other number to compare with.
         Returns:
-            number (Number): The result of the operation as a new Number. This can be either 1 (true) or 0 (false)
+            number (Number): The result of the operation. This can be either 1 (true) or 0 (false)
         """
         return Number(int(self.value < other.value), self.context)
 
@@ -101,7 +105,7 @@ class Number:
         Parameters:
             other (Number): The other number to compare with.
         Returns:
-            number (Number): The result of the operation as a new Number. This can be either 1 (true) or 0 (false)
+            number (Number): The result of the operation. This can be either 1 (true) or 0 (false)
         """
         return Number(int(self.value <= other.value), self.context)
 
@@ -110,7 +114,7 @@ class Number:
         Parameters:
             other (Number): The other number to compare with.
         Returns:
-            number (Number): The result of the operation as a new Number. This can be either 1 (true) or 0 (false)
+            number (Number): The result of the operation. This can be either 1 (true) or 0 (false)
         """
         return Number(int(self.value and other.value), self.context)
 
@@ -119,7 +123,7 @@ class Number:
         Parameters:
             other (Number): The other number to compare with.
         Returns:
-            number (Number): The result of the operation as a new Number. This can be either 1 (true) or 0 (false)
+            number (Number): The result of the operation. This can be either 1 (true) or 0 (false)
         """
         return Number(int(self.value or other.value), self.context)
 

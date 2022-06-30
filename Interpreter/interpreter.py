@@ -1,59 +1,22 @@
+from ast import Num
+from Interpreter.function import Function
 from Interpreter.nodes import *
 from Interpreter.number import Number
 from Interpreter.tokens import *
-from Interpreter.nodes import *
 from Interpreter.context import Context, SymbolDictionary
-from typing import Callable
+from typing import Optional
 from itertools import chain
 from functools import reduce, partial
 from operator import add, is_not
 
-class Function:
-    """ Function class which makes it easier to execute a function."""
-    def __init__(self, name, arguments, body, context) -> None:
-        """ Initialize the function class. 
-        Parameters:
-            name (str)        : The name of the function. 
-            arguments (Lst)   : The arguments for the function.
-            body (Node)       : The body of the function in the form of a Node.
-            context (context) : The context for the function.
-        """
-        self.name = name
-        self.arguments = arguments
-        self.body = body
-        self.context = context
-
-    def Execute(self, arguments):
-        """ Execute the function's body. 
-        
-        Parameters:
-            arguments (Lst) : The arguments passed into the function.
-        """
-        context = Context(self.context)
-        context.symbolDictionary = SymbolDictionary(self.context.symbolDictionary)
-        if len(arguments) > len(self.arguments):
-            raise Exception(f"Too many arguments given for {FunctionDef.value} {self.name}.. Expected {len(self.arguments)}, got {len(arguments)}")
-        elif len(arguments) < len(self.arguments):
-            raise Exception(f"Too little arguments given for {FunctionDef.value} {self.name}.. Expected {len(self.arguments)}, got {len(arguments)}")
-
-        def SetArguments(index, localContext):
-            if index < len(arguments):
-                name = self.arguments[index]
-                value = arguments[index]
-                value.context = localContext
-                localContext.symbolDictionary.SetValue(name.value, value)
-                return SetArguments(index + 1, localContext) 
-            return localContext
-        context = SetArguments(0, context)
-        return VisitNode(self.body, context)
-
-def VisitNode(node: 'AllNodes', context: Context):
-    """ VisitNode 
+def VisitNode(node: 'AllNodes', context: Context) -> 'Number':
+    """ Visit the passed Node's function.
+    Every node has a 'Visit' + node function which is responsible for interpreting that node. 
     Parameters:
-        node (Node)       :
-        context (Context) :
+        node (Node): The node which will be interpreted.
+        context (Context): The current existing context.
     Returns:
-
+        number (Number): The result of the AST.
     """
     method = globals()[f'Visit{type(node).__name__}']
     try:
@@ -63,32 +26,32 @@ def VisitNode(node: 'AllNodes', context: Context):
         message = template.format(type(ex).__name__, ex.args)
         print(message)
 
-def VisitNumberNode(node: NumberNode, context: Context):
-    """ VisitNumberNode 
+def VisitNumberNode(node: NumberNode, context: Context) -> Number:
+    """ Interpret a NumberNode 
     Parameters:
-        node (NumberNode) :
-        context (Context) :
+        node (NumberNode): The NumberNode which will be interpreted.
+        context (Context): The current existing context.
     Returns:
-        number (Number)   : A new instance of the Number class.
+        number (Number): The result of interpreting the NumberNode.
     """
     return Number(node.token.value, context)
 
-def VisitReturnNode(node: ReturnNode, context: Context):
-    """ VisitReturnNode 
+def VisitReturnNode(node: ReturnNode, context: Context) -> Optional[Number]:
+    """ Interpret a ReturnNode 
     Parameters:
-        node (ReturnNode) :
-        context (Context) :
+        node (ReturnNode): The ReturnNode which will be interpreted.
+        context (Context): The current existing context.
     Returns:
         
     """
     if node.node:
         return VisitNode(node.node, context)
 
-def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context):
-    """ VisitBinaryOperationNode 
+def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context) -> Number:
+    """ Interpret a BinaryOperationNode 
     Parameters:
-        node (BinaryOperationNode) :
-        context (Context)          :
+        node (BinaryOperationNode): The BinaryOperationNode which will be interpreted.
+        context (Context): The current existing context.
     Returns:
         
     """
@@ -102,11 +65,11 @@ def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context):
         message = template.format(type(ex).__name__, ex.args)
         print(message)
 
-def VisitVariableAssignNode(node: VariableAssignNode, context: Context):
-    """ VisitVariableAssignNode 
+def VisitVariableAssignNode(node: VariableAssignNode, context: Context) -> Number:
+    """ Interpret a VariableAssignNode 
     Parameters:
-        node (VariableAssignNode) :
-        context (Context)         :
+        node (VariableAssignNode): The VariableAssignNode which will be interpreted.
+        context (Context): The current existing context.
     Returns:
         
     """
@@ -115,11 +78,11 @@ def VisitVariableAssignNode(node: VariableAssignNode, context: Context):
     context.symbolDictionary.SetValue(name, value)
     return value
 
-def VisitVariableAccessNode(node: VariableAccessNode, context: Context):
-    """ VisitVariableAccessNode 
+def VisitVariableAccessNode(node: VariableAccessNode, context: Context) -> Number:
+    """ Interpret a VariableAccessNode 
     Parameters:
-        node (VariableAccessNode) :
-        context (Context)         :
+        node (VariableAccessNode): The VariableAccessNode which will be interpreted.
+        context (Context): The current existing context.
     Returns:
         
     """
@@ -129,18 +92,18 @@ def VisitVariableAccessNode(node: VariableAccessNode, context: Context):
         raise Exception(f"No value found for '{name}'..")
     return value
 
-def VisitListNode(node: ListNode, context: Context):
-    """ VisitListNode 
+def VisitListNode(node: ListNode, context: Context) -> Union[List[Number], Number]:
+    """ Interpret a ListNode 
     Parameters:
-        node (ListNode)   :
-        context (Context) :
+        node (ListNode): The ListNode which will be interpreted.
+        context (Context): The current existing context.
     Returns:
         
     """
     returnNodes = map(lambda element: ReturnNode == type(element), node.elements)
     returns = reduce(add, returnNodes, 0)
 
-    def VisitElement(element):
+    def VisitElement(element) -> Number:
         if not returns:
             return VisitNode(element, context)
         if type(element) == ReturnNode:
@@ -150,15 +113,15 @@ def VisitListNode(node: ListNode, context: Context):
     elements = []
     elements = list(chain(*map(lambda node: [*elements, VisitElement(node)], node.elements)))
     elements = list(filter(partial(is_not, None), elements))
-    if len(elements) == 1:
-        return elements[0]
-    return elements
+    if len(elements) != 1:
+        return elements
+    return elements[0]
 
-def VisitIfNode(node: IfNode, context: Context):
-    """ VisitIfNode 
+def VisitIfNode(node: IfNode, context: Context) -> Optional[Number]:
+    """ Interpret an IfNode 
     Parameters:
-        node (IfNode)     :
-        context (Context) :
+        node (IfNode): The IfNode which will be interpreted.
+        context (Context): The current existing context.
     Returns:
         
     """
@@ -169,13 +132,13 @@ def VisitIfNode(node: IfNode, context: Context):
     if node.elseCase:
         expression = node.elseCase
         return VisitNode(expression, context)
-    return Number.null
+    return
 
-def VisitWhileNode(node: WhileNode, context: Context, elements: List = []):
-    """ VisitWhileNode 
+def VisitWhileNode(node: WhileNode, context: Context, elements: List = []) -> None:
+    """ Interpret a WhileNode 
     Parameters:
-        node (WhileNode)  :
-        context (Context) :
+        node (WhileNode): The WhileNode which will be interpreted.
+        context (Context): The current existing context.
     Returns:
         
     """
@@ -185,11 +148,11 @@ def VisitWhileNode(node: WhileNode, context: Context, elements: List = []):
         return VisitWhileNode(node, context, elements)
     return
 
-def VisitFunctionAssignNode(node: FunctionAssignNode, context: Context):
-    """ VisitFunctionAssignNode 
+def VisitFunctionDefenitionNode(node: FunctionDefenitionNode, context: Context) -> Function:
+    """ Interpret a FunctionDefenitionNode 
     Parameters:
-        node (FunctionAssignNode) :
-        context (Context)         :
+        node (FunctionDefenitionNode): The FunctionDefenitionNode which will be interpreted.
+        context (Context): The current existing context.
     Returns:
         
     """
@@ -198,11 +161,11 @@ def VisitFunctionAssignNode(node: FunctionAssignNode, context: Context):
         context.symbolDictionary.SetValue(node.token.value, function)
     return function
 
-def VisitFunctionCallNode(node: FunctionCallNode, context: Context):
-    """ VisitFunctionCallNode 
+def VisitFunctionCallNode(node: FunctionCallNode, context: Context) -> Number:
+    """ Interpret a FunctionCallNode 
     Parameters:
-        node (FunctionCallNode) :
-        context (Context)       :
+        node (FunctionCallNode): The FunctionCallNode which will be interpreted.
+        context (Context): The current existing context.
     Returns:
         
     """
@@ -211,4 +174,4 @@ def VisitFunctionCallNode(node: FunctionCallNode, context: Context):
     arguments = list(chain(*map(lambda node: [*arguments, VisitNode(node, context)], node.arguments)))
     return function.Execute(arguments)
 
-AllNodes = [NumberNode, VariableAccessNode, BinaryOperationNode, VariableAccessNode, VariableAssignNode, IfNode, WhileNode, FunctionAssignNode, FunctionCallNode, ListNode, ReturnNode]
+AllNodes = [NumberNode, VariableAccessNode, BinaryOperationNode, VariableAccessNode, VariableAssignNode, IfNode, WhileNode, FunctionDefenitionNode, FunctionCallNode, ListNode, ReturnNode]

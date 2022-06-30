@@ -1,6 +1,3 @@
-from ast import arg
-
-
 class Function:
     """ Function class which makes it easier to execute a function."""
     def __init__(self, name, arguments, body, context) -> None:

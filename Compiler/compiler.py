@@ -7,8 +7,8 @@ from Interpreter.nodes import *
 from itertools import chain
 from operator import is_not, add
 
-def Compile(filename, functionAssignNode, node):
-    instructions = [".cpu cortex-m0\n", ".text\n", ".align 2\n", f".global {functionAssignNode.token.value}\n\n", f'{functionAssignNode.token.value}:\n', set()]
+def Compile(filename, FunctionDefenitionNode, node):
+    instructions = [".cpu cortex-m0\n", ".text\n", ".align 2\n", f".global {FunctionDefenitionNode.token.value}\n\n", f'{FunctionDefenitionNode.token.value}:\n', set()]
     context = Context()
 
     instructions = VisitNode(node, context, instructions)[1]
@@ -194,10 +194,10 @@ def VisitWhileNode(node: WhileNode, context: Context, instructions):
     instructions.append(f"\tBEQ \tLOOP\n")
     return instructions
 
-def VisitFunctionAssignNode(node: FunctionAssignNode, context: Context, instructions):
-    """ VisitFunctionAssignNode 
+def VisitFunctionDefenitionNode(node: FunctionDefenitionNode, context: Context, instructions):
+    """ VisitFunctionDefenitionNode 
     Parameters:
-        node (FunctionAssignNode) :
+        node (FunctionDefenitionNode) :
         context (Context)         :
     Returns:
         

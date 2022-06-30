@@ -1,23 +1,19 @@
 from typing import Union
 from Interpreter.context import Context
 class Number:
-    """ The Number class contains all data and all the functions which can be applied to a number. """
-
-    def __init__(self, value: Union[int, float], context, register):
-        """ Store the passed value and context. 
-        
+    def __init__(self, value: Union[int, float], context, register: str) -> None:
+        """ Initialize the passed value, context and register. 
         Parameters:
-            value (int, float) : The value for the number.
-            register (int)  : The register of the number.
+            value (int, float): The value for the number.
+            context (Context): The existing context.
+            register (str): The register for the number.
         """
         self.value = value
         self.context = context
         self.register = register
 
-    def __repr__(self) -> str:
-        return f'{self.value}'
-
     def __str__(self) -> str:
+        """ Represents self.value as a string. """
         return f'{self.value}'
 
     def Plus(self, other, context, instructions):

@@ -2,7 +2,6 @@ from Interpreter.tokens import *
 from typing import Union, List
 
 class NumberNode:
-    """ This class stores the value of a NumberNode."""
     def __init__(self, token: Union[Int, Float]) -> None:
         """ Initialize the NumberNode. 
         Parameters:
@@ -15,7 +14,6 @@ class NumberNode:
         return f'{self.token}'
 
 class VariableAccessNode:
-    """ This class stores the value of a VariableAccesNode. """
     def __init__(self, token: Union[Int, Float]) -> None:
         """ Initialize the VariableAccessNode. 
         Parameters:
@@ -27,18 +25,13 @@ class VariableAccessNode:
         """ Represent VariableAccessNode as string. """
         return f'{self.token}'
 
-    def __repr__(self) -> str:
-        """ Represent VariableAccessNode as string. """
-        return f"{self.token}"
-
 class BinaryOperationNode:
-    """ This class stores the value of a BinaryOperationNode. """
-    def __init__(self, left: Union[VariableAccessNode, NumberNode], operator: 'OperatorTokens', right: Union[VariableAccessNode, NumberNode]) -> None:
+    def __init__(self, left: 'Node', operator: 'OperatorTokens', right: 'Node') -> None:
         """ Initialize the BinaryOperationNode. 
         Parameters:
-            left (VariableAccessNode, NumberNode):
-            operator (OperatorTokens):
-            right (VariableAccessNode, NumberNode):
+            left (VariableAccessNode, NumberNode): The left node for the binary operation.
+            operator (OperatorTokens): The operator node for the binary operation.
+            right (VariableAccessNode, NumberNode): The right node for the binary operation.
         """
         self.left = left
         self.operator = operator
@@ -48,12 +41,7 @@ class BinaryOperationNode:
         """ Represent BinaryOperationNode as string. """
         return f'({self.token}, {self.operator}, {self.right})'
 
-    def __repr__(self):
-        """ Represent BinaryOperationNode as string. """
-        return f'({self.left}, {self.operator}, {self.right})'
-
 class VariableAssignNode:
-    """ This class stores the value of a VariableAssignNode. """
     def __init__(self, token: Identifier, node: Union[VariableAccessNode, NumberNode]) -> None:
         """ Initialize the VariableAssignNode. 
         Parameters:
@@ -68,7 +56,6 @@ class VariableAssignNode:
         return f'({self.token}, {self.node})'
 
 class ListNode:
-    """ This class stores the value of a ListNode. """
     def __init__(self, elements: List[VariableAccessNode]) -> None:
         """ Initialize the ListNode. 
         Parameters:
@@ -81,7 +68,6 @@ class ListNode:
         return f'{self.elements}'
 
 class IfNode:
-    """ This class stores the value of an IfNode. """
     def __init__(self, case, elseCase: ListNode) -> None:
         """ Initialize the IfNode. 
         Parameters:
@@ -96,7 +82,6 @@ class IfNode:
         return f'({self.case}, {self.elseCase})'
         
 class WhileNode:
-    """ This class stores the value of a WhileNode. """
     def __init__(self, condition: VariableAccessNode, body) -> None:
         """ Initialize the WhileNode. 
         Parameters:
@@ -110,10 +95,9 @@ class WhileNode:
         """ Represent WhileNode as string. """
         return f'({self.condition}, {self.body})'
 
-class FunctionAssignNode:
-    """ This class stores the value of a FunctionAssignNode. """
+class FunctionDefenitionNode:
     def __init__(self, token, arguments, body):
-        """ Initialize the FunctionAssignNode. 
+        """ Initialize the FunctionDefenitionNode. 
         Parameters:
             token (Token):
             arguments ():
@@ -124,11 +108,10 @@ class FunctionAssignNode:
         self.body = body
 
     def __str__(self) -> str:
-        """ Represent FunctionAssignNode as string. """
+        """ Represent FunctionDefenitionNode as string. """
         return f'({self.token}, {self.arguments}, {self.body})'
 
 class FunctionCallNode:
-    """ This class stores the value of a FunctionCallNode. """
     def __init__(self, node: VariableAccessNode, arguments: List[VariableAccessNode]):
         """ Initialize the FunctionCallNode. 
         Parameters:
@@ -143,11 +126,10 @@ class FunctionCallNode:
         return f'({self.node}, {self.arguments})'
 
 class ReturnNode:
-    """ This class stores the value of a ReturnNode. """
-    def __init__(self, node) -> None:
+    def __init__(self, node: 'Node') -> None:
         """ Initialize the ReturnNode. 
         Parameters:
-            node () :
+            node (Node): The node which will be called on returning.
         """
         self.node = node
 
@@ -156,3 +138,4 @@ class ReturnNode:
         return f'{self.node}'
 
 OperatorTokens = Union[Plus, Minus, Divide, Multiply, Equals, NotEquals, GreaterThan, GreaterThanEquals, LessThan, LessThanEquals, And, Or]
+Node = Union[NumberNode, VariableAccessNode, BinaryOperationNode, VariableAssignNode, ListNode, IfNode, WhileNode, FunctionDefenitionNode, FunctionCallNode, ReturnNode]
