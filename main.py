@@ -1,13 +1,11 @@
-import re
-import sys
-from Interpreter.number import Number
-from Interpreter.lexer import Lex
-from Interpreter.parser import Parse
-from Interpreter.interpreter import VisitNode, Function
+from Compiler.compiler import Compile
 from Interpreter.context import Context, SymbolDictionary
+from Interpreter.interpreter import VisitNode, Function
+from Interpreter.lexer import Lex
+from Interpreter.number import Number
+from Interpreter.parser import Parse
+import sys
 from typing import List
-from Compiler.compiler import Compiler
-# Apes Among Programmers
 
 def RunFile(filename: str) -> List[int]:
     """ Run and interpret an .AAP file.
@@ -24,15 +22,14 @@ def RunFile(filename: str) -> List[int]:
     tokens = Lex(filename=filename)
     ast = Parse(tokens, index=0)
     result = VisitNode(ast, context)
-    print(result)
-    try:
-        if len(result) == 1:
-            return result[0]
-        else:
-            result = list(filter(lambda element: type(element) != Function, result))
-            return result
-    except:
-        return result
+    # result = list(filter(lambda element: type(element) != Function, result))
+    return result
+    # try:
+    #     if len(result) == 1:
+    #         return result[0]
+    #     else:
+    # except:
+    #     return result
 
 def Shell() -> None:
     """ Run the AAP shell. 
@@ -45,42 +42,25 @@ def Shell() -> None:
         tokens = Lex(text=[text])
         ast = Parse(tokens, index=0)
         result = VisitNode(ast, context)
-        if result:
-            if len(result.elements) == 1:
-                print(result.elements[0])
-            else:
-                print(result)
+        print(result)
 
-def Compile(inputFilename, outputFilename):
+def CompileFile(inputFilename, outputFilename):
     tokens = Lex(filename=inputFilename)
     ast = Parse(tokens, 0)
     print(VisitNode(ast, context))
     node = ast.elements[0]
-    compiler = Compiler(outputFilename, node)
-    compiler.VisitNode(ast)
+    Compile(outputFilename, node, ast)
 
 if __name__ == '__main__':
     symbols = SymbolDictionary()
     context = Context()
     context.symbolDictionary = symbols
-    symbols.SetValue("NULL", Number.null)
-    symbols.SetValue("TRUE", Number.true)
-    symbols.SetValue("FALSE", Number.false)
 
-    # b = False
-    # if b:
-    #     print(RunFile("main.AAP"))
-    # else:
-    #     tokens = Lex(None, "main.AAP")
-    #     ast = Parse(tokens, 0)
-    #     nodeToCompile = ast.elements[0]
-    #     compiler = Compiler("main.AAP", "main.asm", nodeToCompile)
-    #     compiler.VisitNode(ast)
-    # print(RunFile("main.AAP"))
-
-    Compile("main.AAP", "odd.asm")
     # Compile(sys.argv[1], sys.argv[2])
-    # if len(sys.argv) == 2:
-    #     print(RunFile(sys.argv[1]))
-    # else:
-    #     Shell()
+    if len(sys.argv) == 2:
+        print(RunFile(sys.argv[1]))
+    elif len(sys.argv) == 3:
+        print(CompileFile(sys.argv[1], sys.argv[2]))
+    else:
+        # CompileFile("main.AAP", "yoghurt.asm")
+        Shell()

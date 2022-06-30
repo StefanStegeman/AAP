@@ -98,8 +98,8 @@ def Expression(tokens: List[Token], index: int) -> Tuple['Node', int]:
         return VariableAssignNode(name, expression), index
     return BinaryOperation(Comparison, (And, Or), tokens, index)
 
-def IfC(tokens: List[Token], index: int) -> Tuple[ListNode, int]:
-    """ IfC.
+def ElseStatement(tokens: List[Token], index: int) -> Tuple[ListNode, int]:
+    """ ElseStatement.
     Parameters:
         tokens (Lst)   : List with the tokens which will be parsed.
         index (int)    : The index which will be used throughout the parse process.
@@ -125,25 +125,7 @@ def IfC(tokens: List[Token], index: int) -> Tuple[ListNode, int]:
             elseCase = expression
     return elseCase, index
 
-def IfBORC(tokens: List[Token], index: int) -> Tuple[Tuple[List, ListNode], int]:
-    """ IfBORC.
-    Parameters:
-        tokens (Lst)        : List with the tokens which will be parsed.
-        index (int)         : The index which will be used throughout the parse process.
-    Returns
-        cases (Lst)         : The cases for the Elif statement.
-        elseCase (ListNode) : The else case.
-        index (int)         : The incremented index.
-    """
-    cases, elseCase = [], None
-    if type(tokens[index]) == Elif:
-        allCases, index = IfCases(Elif, tokens, index)
-        cases, elseCase = allCases
-    else:
-        elseCase, index = IfC(tokens, index)
-    return (cases, elseCase), index
-
-def IfCases(token: Token, tokens: List[Token], index: int):
+def IfStatement(tokens: List[Token], index: int):
     """ IfCases.
     Parameters:
         tokens (Lst)   : List with the tokens which will be parsed.
@@ -152,11 +134,11 @@ def IfCases(token: Token, tokens: List[Token], index: int):
         
         index (int)     : The incremented index.
     """
-    cases = []
+    cases = None
     elseCase = None
-    if not type(tokens[index]) == token:
-        print(f"Expected {token.value} token..")
-        raise Exception(f"Expected {token.value} token..")
+    if not type(tokens[index]) == If:
+        print(f"Expected {If.value} token..")
+        raise Exception(f"Expected {If.value} token..")
     index = IncrementIndex(tokens, index)
     condition, index = Expression(tokens, index)
 
@@ -168,34 +150,55 @@ def IfCases(token: Token, tokens: List[Token], index: int):
     if type(tokens[index]) == NewLine:
         index = IncrementIndex(tokens, index)
         statements, index = Statements(tokens, index)
-        cases.append((condition, statements)) 
+        cases = (condition, statements)
 
         if type(tokens[index]) == EndIf:
             index = IncrementIndex(tokens, index)
         else:
-            allCases, index = IfBORC(tokens, index)
-            newCases, elseCase = allCases
-            cases.extend(newCases)
+            elseCase, index = ElseStatement(tokens, index)
     else:
         expression, index = Statement(tokens, index)
-        cases.append((condition, expression))
-        allCases, index = IfBORC(tokens, index)
-        newCases, elseCase = allCases
-        cases.extend(newCases)
-    return (cases, elseCase), index
-
-def IfStatement(tokens: List[Token], index: int) -> Tuple[IfNode, int]:
-    """ IfStatement.
-    Parameters:
-        tokens (Lst)   : List with the tokens which will be parsed.
-        index (int)    : The index which will be used throughout the parse process.
-    Returns
-        node (IfNode)  : The resulting IfNode.
-        index (int)     : The incremented index.
-    """
-    allCases, index = IfCases(If, tokens, index - 1)
-    cases, elseCase = allCases
+        cases = (condition, expression)
+        elseCase, index = ElseStatement(tokens, index)
     return IfNode(cases, elseCase), index
+    # cases = []
+    # elseCase = None
+    # if not type(tokens[index]) == If:
+    #     print(f"Expected {If.value} token..")
+    #     raise Exception(f"Expected {If.value} token..")
+    # index = IncrementIndex(tokens, index)
+    # condition, index = Expression(tokens, index)
+
+    # if not type(tokens[index]) == Then:
+    #     raise Exception(f"Expected {Then.value} token..")
+
+    # index = IncrementIndex(tokens, index)
+
+    # if type(tokens[index]) == NewLine:
+    #     index = IncrementIndex(tokens, index)
+    #     statements, index = Statements(tokens, index)
+    #     cases.append((condition, statements)) 
+
+    #     if type(tokens[index]) == EndIf:
+    #         index = IncrementIndex(tokens, index)
+    #     else:
+    #         elseCase, index = ElseStatement(tokens, index)
+    # else:
+    #     expression, index = Statement(tokens, index)
+    #     cases.append((condition, expression))
+    #     elseCase, index = ElseStatement(tokens, index)
+    # return IfNode(cases, elseCase), index
+
+# def IfStatement(tokens: List[Token], index: int) -> Tuple[IfNode, int]:
+#     """ IfStatement.
+#     Parameters:
+#         tokens (Lst)   : List with the tokens which will be parsed.
+#         index (int)    : The index which will be used throughout the parse process.
+#     Returns
+#         node (IfNode)  : The resulting IfNode.
+#         index (int)     : The incremented index.
+#     """
+#     return If(If, tokens, index - 1)
 
 def WhileLoop(tokens: List[Token], index: int) -> Tuple[WhileNode, int]:
     """ While loop.
@@ -301,9 +304,9 @@ def CallFunction(tokens: List[Token], index: int) -> Tuple[Union[NumberNode, Var
             arguments.append(expression)
 
             def SetArguments(tokenList, i, args):
-                if type(tokens[index]) == Comma:
+                if type(tokens[i]) == Comma:
                     i = IncrementIndex(tokenList, i)
-                    epxr, i = Expression(tokenList, i)
+                    expr, i = Expression(tokenList, i)
                     args.append(expr)
                     return SetArguments(tokenList, i, args)
                 return i
@@ -335,7 +338,7 @@ def Factor(tokens: List[Token], index: int) -> Tuple[Union[NumberNode, VariableA
         if type(tokens[index]) == RPar:
             return expression, IncrementIndex(tokens, index)
     elif type(token) == If:
-        return IfStatement(tokens, index)
+        return IfStatement(tokens, index - 1)
     elif type(token) == While:
         return WhileLoop(tokens, index)
     elif type(token) == FunctionDef:

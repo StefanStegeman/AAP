@@ -30,7 +30,7 @@ class Number:
             number (Number): The result of the operation.
         """
         instructions.append(f"\tADD \t{self.register}, {other.register}\n")
-        return Number(self.value + other.value, self.context, self.register)
+        return Number(self.value + other.value, self.context, self.register), instructions
 
     def Minus(self, other, context, instructions):
         """ This function subtracts other.value with self.value. 
@@ -42,7 +42,7 @@ class Number:
             number (Number): The result of the operation.
         """
         instructions.append(f"\tSUB \t{self.register}, {other.register}\n")
-        return Number(self.value - other.value, self.context, self.register)
+        return Number(self.value - other.value, self.context, self.register), instructions
 
     def Multiply(self, other, context, instructions):
         """ This function multiplies self.value with other.value. 
@@ -54,7 +54,7 @@ class Number:
             number (Number): The result of the operation.
         """
         instructions.append(f"\tMUL \t{self.register}, {other.register}\n")
-        return Number(self.value * other.value, self.context, self.register)
+        return Number(self.value * other.value, self.context, self.register), instructions
 
     def Divide(self, other, context, instructions):
         """ This function divides self.value with other.value. 
@@ -74,8 +74,8 @@ class Number:
         instructions.append(f"\tMOV \t{resultRegister}, R0\n") # Store result of division.
         instructions.append("\tPOP \t{R0, R1}\n") # Restore original values of r0 and r1.
         if(other.value == 0):
-            return Number(self.value / 1, self.lineNumber, context, resultRegister)
-        return Number(self.value / other.value, context, resultRegister)
+            return Number(self.value / 1, self.lineNumber, context, resultRegister), instructions
+        return Number(self.value / other.value, context, resultRegister), instructions
 
     def Equals(self, other, context, instructions):
         """ This function checks whether self.value is equal compared with other.value. 
@@ -92,7 +92,7 @@ class Number:
         instructions.append(f"\tSUB \t{tempRegister}, {other.register}, {self.register}\n")
         instructions.append(f"\tNEG \t{resultRegister}, {tempRegister}\n")
         instructions.append(f"\tADC \t{resultRegister}, {resultRegister}, {tempRegister}\n")
-        return Number(int(self.value == other.value), self.context, resultRegister)
+        return Number(int(self.value == other.value), self.context, resultRegister), instructions
     
     def NotEquals(self, other, context, instructions):
         """ This function checks whether self.value is not equal compared to other.value. 
@@ -109,7 +109,7 @@ class Number:
         instructions.append(f"\tSUB \t{resultRegister}, {other.register}, {self.register}\n")
         instructions.append(f"\tSUB \t{tempRegister}, {resultRegister}, #1\n")
         instructions.append(f"\tSBC \t{resultRegister}, {resultRegister}, {tempRegister}\n")
-        return Number(int(self.value != other.value), self.context, resultRegister)
+        return Number(int(self.value != other.value), self.context, resultRegister), instructions
 
     def GreaterThan(self, other, context, instructions):
         """ This function checks whether self.value is greater than other.value. 
@@ -127,7 +127,7 @@ class Number:
         instructions.append(f"\tCMP \t{self.register}, {other.register}\n")
         instructions.append(f"\tBGT \t{label}\n")
         instructions.append(f"\tMOVS\t{resultRegister}, #0\n")
-        return Number(int(self.value > other.value), self.context, resultRegister)
+        return Number(int(self.value > other.value), self.context, resultRegister), instructions
 
     def GreaterThanEquals(self, other, context, instructions):
         """ This function checks whether self.value is greater than or equal to other.value. 
@@ -145,7 +145,7 @@ class Number:
         instructions.append(f"\tLSR \t{tempRegister}, {other.register}, #31\n")
         instructions.append(f"\tCMP \t{self.register}, {other.register}\n")
         instructions.append(f"\tADC \t{resultRegister}, {resultRegister}, {tempRegister}\n")
-        return Number(int(self.value >= other.value), self.context, resultRegister)
+        return Number(int(self.value >= other.value), self.context, resultRegister), instructions
 
     def LessThan(self, other, context, instructions):
         """ This function checks whether self.value is less than other.value. 
@@ -164,7 +164,7 @@ class Number:
         instructions.append(f"\tBLT \t{label}\n")
         instructions.append(f"\tMOVS\t{resultRegister}, #0\n")
         instructions.append(f"{label}:\n")
-        return Number(int(self.value < other.value), self,context, resultRegister)
+        return Number(int(self.value < other.value), self,context, resultRegister), instructions
 
     def LessThanEquals(self, other, context, instructions):
         """ This function checks whether self.value is less than or equal to other.value. 
@@ -182,7 +182,7 @@ class Number:
         instructions.append(f"\tASR \t{tempRegister}, {other.register}, #31\n")
         instructions.append(f"\tCMP \t{other.register}, {self.register}\n")
         instructions.append(f"\tADC \t{resultRegister}, {resultRegister}, {tempRegister}\n")
-        return Number(int(self.value <= other.value), self.context, resultRegister)
+        return Number(int(self.value <= other.value), self.context, resultRegister), instructions
 
     def And(self, other, context, instructions):
         """ This function checks whether self.value and other.value are true. 
@@ -203,7 +203,7 @@ class Number:
         instructions.append(f"\tSUB \t{otherRegister}, {firstRegister}, {other.register}\n")
         instructions.append(f"\tAND \t{resultRegister}, {resultRegister}, {otherRegister}\n")
         instructions.append(f"\tLSR \t{resultRegister}, {resultRegister}, #31\n")
-        return Number(int(self.value and other.value), self.context, resultRegister)
+        return Number(int(self.value and other.value), self.context, resultRegister), instructions
 
     def Or(self, other, context, instructions):
         """ This function checks whether self.value or other.value are true. 
@@ -224,7 +224,7 @@ class Number:
         instructions.append(f"\tSUB \t{otherRegister}, {firstRegister}, {other.register}\n")
         instructions.append(f"\tORR \t{resultRegister}, {resultRegister}, {otherRegister}\n")
         instructions.append(f"\tLSR \t{resultRegister}, {resultRegister}, #31\n")
-        return Number(int(self.value or other.value), self.context, resultRegister)
+        return Number(int(self.value or other.value), self.context, resultRegister), instructions
 
     def IsTrue(self):
         """ This function checks whether self.value is true. 

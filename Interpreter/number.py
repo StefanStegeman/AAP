@@ -159,7 +159,3 @@ class Number:
             number (Number): The result of the check. This can be either 1 (true) or 0 (false)
         """
         return self.value != 0
-
-Number.null = Number(0)
-Number.true = Number(1)
-Number.false = Number(0)

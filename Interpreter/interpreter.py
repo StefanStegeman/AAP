@@ -1,4 +1,3 @@
-from grpc import Call
 from Interpreter.nodes import *
 from Interpreter.number import Number
 from Interpreter.tokens import *
@@ -6,22 +5,8 @@ from Interpreter.nodes import *
 from Interpreter.context import Context, SymbolDictionary
 from typing import Callable
 from itertools import chain
-from functools import reduce, partial, wraps
+from functools import reduce, partial
 from operator import add, is_not
-
-class List:
-    """ List class which stores the elements of the list and the corresponding context. """
-    def __init__(self, elements, context: Context = None) -> None:
-        """ Initialize the elements and the corresponding context.
-        Parameters:
-            elements (Lst)    : The list with elements which will be stored.
-            context (Context) : The context which corresponds to when the list is being created.     
-        """
-        self.elements = elements
-        self.context = context
-
-    def __repr__(self) -> str:
-        return f'{self.elements}'
 
 class Function:
     """ Function class which makes it easier to execute a function."""
@@ -177,10 +162,10 @@ def VisitIfNode(node: IfNode, context: Context):
     Returns:
         
     """
-    for condition, expression in node.cases:
-        value = VisitNode(condition, context)
-        if value.IsTrue():
-            return VisitNode(expression, context) 
+    condition, expression = node.cases
+    value = VisitNode(condition, context)
+    if value.IsTrue():
+        return VisitNode(expression, context) 
     if node.elseCase:
         expression = node.elseCase
         return VisitNode(expression, context)
@@ -195,10 +180,10 @@ def VisitWhileNode(node: WhileNode, context: Context, elements: List = []):
         
     """
     condition = VisitNode(node.condition, context)
-    if not condition.IsTrue():
-        return List(elements, context)
-    elements.append(VisitNode(node.body, context))
-    return VisitWhileNode(node, context, elements)
+    if condition.IsTrue():
+        elements.append(VisitNode(node.body, context))
+        return VisitWhileNode(node, context, elements)
+    return
 
 def VisitFunctionAssignNode(node: FunctionAssignNode, context: Context):
     """ VisitFunctionAssignNode 
