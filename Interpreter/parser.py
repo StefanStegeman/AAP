@@ -161,44 +161,6 @@ def IfStatement(tokens: List[Token], index: int):
         cases = (condition, expression)
         elseCase, index = ElseStatement(tokens, index)
     return IfNode(cases, elseCase), index
-    # cases = []
-    # elseCase = None
-    # if not type(tokens[index]) == If:
-    #     print(f"Expected {If.value} token..")
-    #     raise Exception(f"Expected {If.value} token..")
-    # index = IncrementIndex(tokens, index)
-    # condition, index = Expression(tokens, index)
-
-    # if not type(tokens[index]) == Then:
-    #     raise Exception(f"Expected {Then.value} token..")
-
-    # index = IncrementIndex(tokens, index)
-
-    # if type(tokens[index]) == NewLine:
-    #     index = IncrementIndex(tokens, index)
-    #     statements, index = Statements(tokens, index)
-    #     cases.append((condition, statements)) 
-
-    #     if type(tokens[index]) == EndIf:
-    #         index = IncrementIndex(tokens, index)
-    #     else:
-    #         elseCase, index = ElseStatement(tokens, index)
-    # else:
-    #     expression, index = Statement(tokens, index)
-    #     cases.append((condition, expression))
-    #     elseCase, index = ElseStatement(tokens, index)
-    # return IfNode(cases, elseCase), index
-
-# def IfStatement(tokens: List[Token], index: int) -> Tuple[IfNode, int]:
-#     """ IfStatement.
-#     Parameters:
-#         tokens (Lst)   : List with the tokens which will be parsed.
-#         index (int)    : The index which will be used throughout the parse process.
-#     Returns
-#         node (IfNode)  : The resulting IfNode.
-#         index (int)     : The incremented index.
-#     """
-#     return If(If, tokens, index - 1)
 
 def WhileLoop(tokens: List[Token], index: int) -> Tuple[WhileNode, int]:
     """ While loop.
@@ -270,13 +232,9 @@ def FunctionDefenition(tokens: List[Token], index: int) -> Tuple[FunctionAssignN
             print(f"Expected {RPar.value} token..")
             raise Exception("Expected RPar token..")
 
-    index = IncrementIndex(tokens, index)   
-    if type(tokens[index]) == Arrow:
-        index = IncrementIndex(tokens, index)
-        body, index = Expression(tokens, index)
-        return FunctionAssignNode(token, arguments, body), index     
+    index = IncrementIndex(tokens, index)       
     if type(tokens[index]) != NewLine:
-        raise Exception(f"Expected {Arrow.value} or Newline after the assignment of '{FunctionAssignNode.value}' '{token}'..")
+        raise Exception(f"Expected a new line after the assignment of '{FunctionAssignNode.value}' '{token}'..")
     index = IncrementIndex(tokens, index)
     body, index = Statements(tokens, index)
     if type(tokens[index]) != EndFunction:

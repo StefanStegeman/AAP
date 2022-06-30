@@ -155,7 +155,7 @@ def VisitIfNode(node: IfNode, context: Context, instructions):
     Returns:
         
     """
-    condition, expression = node.cases
+    condition, expression = node.case
     registers = copy(context.registers)
     value, instructions = VisitNode(condition, context, instructions)
     value = value

@@ -162,7 +162,7 @@ def VisitIfNode(node: IfNode, context: Context):
     Returns:
         
     """
-    condition, expression = node.cases
+    condition, expression = node.case
     value = VisitNode(condition, context)
     if value.IsTrue():
         return VisitNode(expression, context) 

@@ -1,8 +1,7 @@
 from Compiler.compiler import Compile
 from Interpreter.context import Context, SymbolDictionary
-from Interpreter.interpreter import VisitNode, Function
+from Interpreter.interpreter import VisitNode
 from Interpreter.lexer import Lex
-from Interpreter.number import Number
 from Interpreter.parser import Parse
 import sys
 from typing import List
@@ -31,19 +30,6 @@ def RunFile(filename: str) -> List[int]:
     # except:
     #     return result
 
-def Shell() -> None:
-    """ Run the AAP shell. 
-    Run the AAP shell which allows you to program in AAP inside of a terminal shell.
-    """
-    while True:
-        text = input('Speak up ape> ')
-        if text.strip() == "": 
-            continue
-        tokens = Lex(text=[text])
-        ast = Parse(tokens, index=0)
-        result = VisitNode(ast, context)
-        print(result)
-
 def CompileFile(inputFilename, outputFilename):
     tokens = Lex(filename=inputFilename)
     ast = Parse(tokens, 0)
@@ -63,4 +49,4 @@ if __name__ == '__main__':
         print(CompileFile(sys.argv[1], sys.argv[2]))
     else:
         # CompileFile("main.AAP", "yoghurt.asm")
-        Shell()
+        exit(-1)
