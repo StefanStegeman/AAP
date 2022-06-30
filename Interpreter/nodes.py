@@ -1,9 +1,11 @@
 from Interpreter.tokens import *
-from typing import Union, List
+from typing import Union, List, Tuple
 
 class NumberNode:
     def __init__(self, token: Union[Int, Float]) -> None:
         """ Initialize the NumberNode. 
+        Haskell:
+            Init :: Int | Float -> None
         Parameters:
             token (Int, Float): The token which contains the number value.
         """
@@ -16,6 +18,8 @@ class NumberNode:
 class VariableAccessNode:
     def __init__(self, token: Union[Int, Float]) -> None:
         """ Initialize the VariableAccessNode. 
+        Haskell:
+            Init :: Int | Float -> None
         Parameters:
             token (Int, Float): The token which is being stored.
         """
@@ -28,9 +32,11 @@ class VariableAccessNode:
 class BinaryOperationNode:
     def __init__(self, left: 'Node', operator: 'OperatorTokens', right: 'Node') -> None:
         """ Initialize the BinaryOperationNode. 
+        Haskell:
+            Init :: Node -> Token -> Node -> None
         Parameters:
             left (VariableAccessNode, NumberNode): The left node for the binary operation.
-            operator (OperatorTokens): The operator node for the binary operation.
+            operator (OperatorTokens): The operator token for the binary operation.
             right (VariableAccessNode, NumberNode): The right node for the binary operation.
         """
         self.left = left
@@ -44,6 +50,8 @@ class BinaryOperationNode:
 class VariableAssignNode:
     def __init__(self, token: Identifier, node: Union[VariableAccessNode, NumberNode]) -> None:
         """ Initialize the VariableAssignNode. 
+        Haskell:
+            Init :: Token -> VariableAccessNode | NumberNode -> None
         Parameters:
             token (Identifier):
             node (VariableAccessNode, NumberNode):
@@ -58,6 +66,8 @@ class VariableAssignNode:
 class ListNode:
     def __init__(self, elements: List[VariableAccessNode]) -> None:
         """ Initialize the ListNode. 
+        Haskell:
+            Init :: [VariableAccessNode] -> None
         Parameters:
             elements (Lst):
         """
@@ -68,11 +78,13 @@ class ListNode:
         return f'{self.elements}'
 
 class IfNode:
-    def __init__(self, case, elseCase: ListNode) -> None:
-        """ Initialize the IfNode. 
+    def __init__(self, case: Tuple['Node', 'Node'], elseCase: 'Node') -> None:
+        """ Initialize the IfNode.
+        Haskell:
+            Init :: Tuple -> Node -> None 
         Parameters:
-            case (Lst): The case which contains a condition and the expression.
-            elseCase (): An expression which will be executed.
+            case (Tuple): The case which contains a condition and the expression.
+            elseCase (Node): An expression which will be executed.
         """
         self.case = case
         self.elseCase = elseCase
@@ -82,11 +94,13 @@ class IfNode:
         return f'({self.case}, {self.elseCase})'
         
 class WhileNode:
-    def __init__(self, condition: VariableAccessNode, body) -> None:
+    def __init__(self, condition: VariableAccessNode, body: ListNode) -> None:
         """ Initialize the WhileNode. 
+        Haskell:
+            Init :: VariableAccessNode -> ListNode -> None
         Parameters:
-            condition (VariableAccessNode):
-            body ():
+            condition (VariableAccessNode): The condition for the body.
+            body (ListNode): The ListNode with all the code for the body.
         """
         self.condition = condition
         self.body = body
@@ -96,12 +110,14 @@ class WhileNode:
         return f'({self.condition}, {self.body})'
 
 class FunctionDefenitionNode:
-    def __init__(self, token, arguments, body):
+    def __init__(self, token: Token, arguments: ListNode, body: ListNode) -> None:
         """ Initialize the FunctionDefenitionNode. 
+        Haskell:
+            Init :: Token -> ListNode -> ListNode -> None
         Parameters:
-            token (Token):
-            arguments ():
-            body ():
+            token (Token): The token and thus the name of the function.
+            arguments (ListNode): The ListNode with all the 'abstract' arguments for the function.
+            body (ListNode): The ListNode with all the code for the body.
         """
         self.token = token
         self.arguments = arguments
@@ -112,8 +128,10 @@ class FunctionDefenitionNode:
         return f'({self.token}, {self.arguments}, {self.body})'
 
 class FunctionCallNode:
-    def __init__(self, node: VariableAccessNode, arguments: List[VariableAccessNode]):
+    def __init__(self, node: VariableAccessNode, arguments: List[VariableAccessNode]) -> None:
         """ Initialize the FunctionCallNode. 
+        Haskell:
+            Init :: VariableAccessNode -> [VariableAccessNode] -> None
         Parameters:
             node (VariableAccessNode): The function which will be called.
             arguments (List[VariableAccessNode]): The arguments for the function call.
@@ -127,7 +145,9 @@ class FunctionCallNode:
 
 class ReturnNode:
     def __init__(self, node: 'Node') -> None:
-        """ Initialize the ReturnNode. 
+        """ Initialize the ReturnNode.
+        Haskell:
+            Init :: Node -> None 
         Parameters:
             node (Node): The node which will be called on returning.
         """

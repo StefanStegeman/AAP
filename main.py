@@ -1,13 +1,17 @@
 from Compiler.compiler import Compile
+from Compiler.number import Number
 from Interpreter.context import Context, SymbolDictionary
 from Interpreter.interpreter import VisitNode
 from Interpreter.lexer import Lex
 from Interpreter.parser import Parse
+from Interpreter.nodes import *
 import sys
 from typing import List
 
-def InterpretFile(filename: str) -> List[int]:
+def InterpretFile(filename: str) -> List[Number]:
     """ Read and interpret a .AAP file.
+    Haskell:
+        InterpretFile :: String -> [Number]
     This contains three steps:
         - Create tokens with the Lexer.
         - Create an AST from the tokens with the Parser.
@@ -24,6 +28,8 @@ def InterpretFile(filename: str) -> List[int]:
 
 def CompileFile(input: str, output: str) -> None:
     """ Read and compile a .AAP file.
+    Haskell:
+        CompileFile :: String -> String -> None
     This contains three steps:
         - Create tokens with the Lexer.
         - Create an AST from the tokens with the Parser.
@@ -48,5 +54,5 @@ if __name__ == '__main__':
     elif len(sys.argv) == 3:
         CompileFile(sys.argv[1], sys.argv[2])
     else:
+        print("Expected atleast an inputfile.\n")
         print(InterpretFile("main.AAP"))
-        # exit(-1)

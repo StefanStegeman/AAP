@@ -6,14 +6,22 @@ from functools import reduce, partial
 from Interpreter.nodes import *
 from itertools import chain
 from operator import is_not, add
+from typing import List, Tuple
 
-def Compile(filename, FunctionDefenitionNode, node):
+def Compile(filename: str, FunctionDefenitionNode: FunctionDefenitionNode, ast: ListNode) -> None:
+    """ Compile the given function and write it to a file. 
+    Haskell:
+        Compile :: String -> FunctionDefenitionNode -> ListNode -> None
+    Parameters:
+        filename (str): The name of the file where the output will be written to.
+        FunctionDefenitionNode (FunctionDefenitionNode): The function which will be compiled.
+        ast (ListNode): The node where the compilation starts.
+    """
     instructions = [".cpu cortex-m0\n", ".text\n", ".align 2\n", f".global {FunctionDefenitionNode.token.value}\n\n", f'{FunctionDefenitionNode.token.value}:\n', set()]
-    context = Context()
-
-    instructions = VisitNode(node, context, instructions)[1]
-
     registers = ["R4", "R5", "R6", "R7", "R8"]
+    context = Context()
+    instructions = VisitNode(ast, context, instructions)[1]
+
     try:
         highestRegisterIndex = registers.index(max(instructions[5]))
         usedRegisters = registers[0:highestRegisterIndex + 1]
@@ -33,13 +41,17 @@ def Compile(filename, FunctionDefenitionNode, node):
         instructions = map(lambda x:x, instructions)
         file.writelines(instructions)
 
-def VisitNode(node, context, instructions):
-    """ VisitNode 
+def VisitNode(node: 'AllNodes', context: Context, instructions: List[Union[str, set]]) -> Union[FunctionCallNode, List[Number], Number]:
+    """ Visit the passed Node's function and compile this.
+    Every node has a Visit{node} function which is responsible for compiling that node.
+    Haskell:
+        VisitNode :: Node -> Context -> [String & Set] -> FunctionCallnode | [Number] | Number
     Parameters:
-        node (Node)       :
-        context (Context) :
+        node (Node): The node which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-
+        number (Number): The result of the AST.
     """
     method = globals()[f'Visit{type(node).__name__}']
     try:
@@ -49,26 +61,34 @@ def VisitNode(node, context, instructions):
         message = template.format(type(exception).__name__, exception.args)
         print(message)
 
-def VisitNumberNode(node: NumberNode, context: Context, instructions):
-    """ VisitNumberNode 
+def VisitNumberNode(node: NumberNode, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    """ Compile a NumberNode. 
+    Haskell:
+        VisitNumberNode :: NumberNode -> Context -> [String & Set] -> Tuple
     Parameters:
-        node (NumberNode) :
-        context (Context) :
+        node (NumberNode): The NumberNode which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-        number (Number)   : A new instance of the Number class.
+        number (Number): The result of compiling the NumberNode.
+        instructions (Lst): The updated list of assembler instructions.
     """
     register = context.registers.pop(0)
     instructions[5].add(register)
     instructions.append(f"\tMOVS\t{register}, #{node.token.value}\n")
     return Number(node.token.value, context, register), instructions
 
-def VisitReturnNode(node: ReturnNode, context: Context, instructions):
-    """ VisitReturnNode 
+def VisitReturnNode(node: ReturnNode, context: Context, instructions: List[Union[str, set]]) -> Union[Tuple[Number, List[Union[str, set]]], List[Union[str, set]]]:
+    """ Compile a ReturnNode. 
+    Haskell:
+        VisitReturnNode :: ReturnNode -> Context -> [String & Set] -> Tuple | [String & Set]
     Parameters:
-        node (ReturnNode) :
-        context (Context) :
+        node (ReturnNode): The ReturnNode which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-        
+        number (Number): The result of compiling the ReturnNode.
+        instructions (Lst): The updated list of assembler instructions.
     """
     if node.node:
         result, instructions = VisitNode(node.node, context, instructions)
@@ -77,13 +97,17 @@ def VisitReturnNode(node: ReturnNode, context: Context, instructions):
             instructions.append(f"\tMOVS\tR0, {result.register}\n")
         return result, instructions
 
-def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context, instructions):
-    """ VisitBinaryOperationNode 
+def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    """ Compile a BinaryOperation. 
+    Haskell:
+        VisitBinaryOperationNode :: BinaryOperationNode -> Context -> [String & Set] -> Tuple
     Parameters:
-        node (BinaryOperationNode) :
-        context (Context)          :
+        node (BinaryOperationNode): The BinaryOperationNode which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-        
+        number (Number): The result of compiling the BinaryOperationNode.
+        instructions (Lst): The updated list of assembler instructions.
     """
     left, instructions = VisitNode(node.left, context, instructions)
     right, instructions = VisitNode(node.right, context, instructions)
@@ -95,26 +119,34 @@ def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context, instru
         message = template.format(type(ex).__name__, ex.args)
         print(message)
 
-def VisitVariableAssignNode(node: VariableAssignNode, context: Context, instructions):
-    """ VisitVariableAssignNode 
+def VisitVariableAssignNode(node: VariableAssignNode, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    """ Compile a VariableAssignNode. 
+    Haskell:
+        VisitVariableAssignNode :: VariableAssignNode -> Context -> [String && Set] -> Tuple
     Parameters:
-        node (VariableAssignNode) :
-        context (Context)         :
+        node (VariableAssignNode): The VariableAssignNode which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-        
+        number (Number): The result of compiling the VariableAssignNode.
+        instructions (Lst): The updated list of assembler instructions.
     """
     name = node.token.value
     value, instructions = VisitNode(node.node, context, instructions)
     context.symbolDictionary.SetValue(name, value)
     return value, instructions
 
-def VisitVariableAccessNode(node: VariableAccessNode, context: Context, instructions):
-    """ VisitVariableAccessNode 
+def VisitVariableAccessNode(node: VariableAccessNode, context: Context, instructions: List[Union[str, set]]) -> Tuple[Number, List[Union[str, set]]]:
+    """ Compile a VariableAccessNode. 
+    Haskell:
+        VisitVariableAccessNode :: VariableAccessNode -> Context -> [String && Set] -> Tuple
     Parameters:
-        node (VariableAccessNode) :
-        context (Context)         :
+        node (VariableAccessNode): The VariableAccessNode which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-        
+        number (Number): The result of compiling the VariableAccessNode.
+        instructions (Lst): The updated list of assembler instructions.
     """
     name = node.token.value
     value = context.symbolDictionary.GetValue(name)
@@ -122,13 +154,17 @@ def VisitVariableAccessNode(node: VariableAccessNode, context: Context, instruct
         raise Exception(f"No value found for '{name}'..")
     return value, instructions
 
-def VisitListNode(node: ListNode, context: Context, instructions):
-    """ VisitListNode 
+def VisitListNode(node: ListNode, context: Context, instructions: List[Union[str, set]]) -> Union[Tuple[Number, List[Union[str, set]]], List[Union[str, set]]]:
+    """ Compile a ListNode. 
+    Haskell:
+        VisitListNode :: ListNode -> Context -> [String && Set] -> Tuple | [String & Set]
     Parameters:
-        node (ListNode)   :
-        context (Context) :
+        node (ListNode): The ListNode which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-        
+        number (Number): The result of compiling the ListNode.
+        instructions (Lst): The updated list of assembler instructions.
     """
     returnNodes = map(lambda element: ReturnNode == type(element), node.elements)
     returns = reduce(add, returnNodes, 0)
@@ -147,13 +183,17 @@ def VisitListNode(node: ListNode, context: Context, instructions):
         return elements[0], instructions
     return elements, instructions
 
-def VisitIfNode(node: IfNode, context: Context, instructions):
-    """ VisitIfNode 
+def VisitIfNode(node: IfNode, context: Context, instructions: List[Union[str, set]]) -> Union[Tuple[Number, List[Union[str, set]]], List[Union[str, set]]]:
+    """ Compile a IfNode. 
+    Haskell:
+        VisitIfNode :: IfNode -> Context -> [String && Set] -> Tuple | [String & Set]
     Parameters:
-        node (IfNode)     :
-        context (Context) :
+        node (IfNode): The IfNode which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-        
+        number (Number): The result of compiling the IfNode.
+        instructions (Lst): The updated list of assembler instructions.
     """
     condition, expression = node.case
     registers = copy(context.registers)
@@ -179,13 +219,16 @@ def VisitIfNode(node: IfNode, context: Context, instructions):
     return result, instructions
 
 
-def VisitWhileNode(node: WhileNode, context: Context, instructions):
-    """ VisitWhileNode 
+def VisitWhileNode(node: WhileNode, context: Context, instructions: List[Union[str, set]]) -> List[Union[str, set]]:
+    """ Compile a WhileNode. 
+    Haskell:
+        VisitWhileNode :: WhileNode -> Context -> [String && Set] -> [String & Set]
     Parameters:
-        node (WhileNode)  :
-        context (Context) :
+        node (WhileNode): The WhileNode which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-        
+        instructions (Lst): The updated list of assembler instructions.
     """
     instructions.append("LOOP:\n")
     condition, instructions = VisitNode(node.condition, context, instructions)
@@ -194,13 +237,17 @@ def VisitWhileNode(node: WhileNode, context: Context, instructions):
     instructions.append(f"\tBEQ \tLOOP\n")
     return instructions
 
-def VisitFunctionDefenitionNode(node: FunctionDefenitionNode, context: Context, instructions):
-    """ VisitFunctionDefenitionNode 
+def VisitFunctionDefenitionNode(node: FunctionDefenitionNode, context: Context, instructions: List[Union[str, set]]) -> Tuple[Function, List[Union[str, set]]]:
+    """ Compile a FunctionDefenitionNode.
+    Haskell:
+        VisitFunctionDefenitionNode :: FunctionDefenitionNode -> Context -> [String && Set] ->  Tuple
     Parameters:
-        node (FunctionDefenitionNode) :
-        context (Context)         :
+        node (FunctionDefenitionNode): The FunctionDefenitionNode which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-        
+        function (Function): The result of compiling the FunctionDefenitionNode.
+        instructions (Lst): The updated list of assembler instructions.
     """
     function = Function(node.token.value, node.arguments, node.body, context) 
     if node.token:
@@ -209,15 +256,20 @@ def VisitFunctionDefenitionNode(node: FunctionDefenitionNode, context: Context, 
     body, context = function.Compile(arguments, context)
     return VisitNode(body, context, instructions)
 
-def VisitFunctionCallNode(node: FunctionCallNode, context: Context, instructions):
-    """ VisitFunctionCallNode 
+def VisitFunctionCallNode(node: FunctionCallNode, context: Context, instructions: List[Union[str, set]]) -> List[Union[str, set]]:
+    """ Compile a FunctionCallNode. 
+    Haskell:
+        VisitFunctionCallNode :: FunctionCallNode -> Context -> [String && Set] -> [String & Set]
     Parameters:
-        node (FunctionCallNode) :
-        context (Context)       :
+        node (FunctionCallNode): The FunctionCallNode which will be compiled.
+        context (Context): The current existing context.
+        instructions (Lst): The list containing the assembler instructions.
     Returns:
-        
+        instructions (Lst): The updated list of assembler instructions.
     """
     arguments = [] 
     arguments, instructions = list(chain(*map(lambda node: [*arguments, VisitNode(node, context, instructions)], node.arguments)))
     instructions.append(f"\tBL  \t{node.node.token.value}\n")
     return instructions
+
+AllNodes = [NumberNode, VariableAccessNode, BinaryOperationNode, VariableAccessNode, VariableAssignNode, IfNode, WhileNode, FunctionDefenitionNode, FunctionCallNode, ListNode, ReturnNode]

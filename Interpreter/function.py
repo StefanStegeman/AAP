@@ -8,11 +8,13 @@ from typing import List
 class Function:
     def __init__(self, name: str, arguments: List[Identifier], body: ListNode, context: Context) -> None:
         """ Initialize the function class. 
+        Haskell:
+            Init :: String -> [Identifier] -> ListNode -> Context -> None
         Parameters:
-            name (str)        : The name of the function. 
-            arguments (Lst)   : The arguments for the function.
-            body (Node)       : The body of the function in the form of a Node.
-            context (context) : The context for the function.
+            name (str): The name of the function. 
+            arguments (Lst): The arguments for the function.
+            body (Node): The body of the function in the form of a Node.
+            context (context): The context for the function.
         """
         self.name = name
         self.arguments = arguments
@@ -21,6 +23,8 @@ class Function:
 
     def Execute(self, arguments: List[Number]) -> Number:
         """ Execute the function's body. 
+        Haskell:
+            Execute :: [Number] -> Number
         Parameters:
             arguments (Lst): The arguments passed into the function.
         Returns:

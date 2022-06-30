@@ -1,17 +1,18 @@
-from ast import Num
 from Interpreter.function import Function
 from Interpreter.nodes import *
 from Interpreter.number import Number
 from Interpreter.tokens import *
-from Interpreter.context import Context, SymbolDictionary
+from Interpreter.context import Context
 from typing import Optional
 from itertools import chain
 from functools import reduce, partial
 from operator import add, is_not
 
 def VisitNode(node: 'AllNodes', context: Context) -> Number:
-    """ Visit the passed Node's function.
-    Every node has a 'Visit' + node function which is responsible for interpreting that node. 
+    """ Visit the passed Node's function and interpret this.
+    Every node has a Visit{node} function which is responsible for interpreting that node. 
+    Haskell:
+        VisitNode :: Node -> Context -> Number
     Parameters:
         node (Node): The node which will be interpreted.
         context (Context): The current existing context.
@@ -28,6 +29,8 @@ def VisitNode(node: 'AllNodes', context: Context) -> Number:
 
 def VisitNumberNode(node: NumberNode, context: Context) -> Number:
     """ Interpret a NumberNode. 
+    Haskell:
+        VisitNumberNode :: NumberNode -> Context -> Number
     Parameters:
         node (NumberNode): The NumberNode which will be interpreted.
         context (Context): The current existing context.
@@ -38,6 +41,8 @@ def VisitNumberNode(node: NumberNode, context: Context) -> Number:
 
 def VisitReturnNode(node: ReturnNode, context: Context) -> Optional[Number]:
     """ Interpret a ReturnNode. 
+    Haskell:
+        VisitReturnNode :: ReturnNode -> Context -> Number | None
     Parameters:
         node (ReturnNode): The ReturnNode which will be interpreted.
         context (Context): The current existing context.
@@ -50,6 +55,8 @@ def VisitReturnNode(node: ReturnNode, context: Context) -> Optional[Number]:
 
 def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context) -> Number:
     """ Interpret a BinaryOperationNode. 
+    Haskell:
+        VisitBinaryOperationNode :: BinaryOperationNode -> Context -> Number
     Parameters:
         node (BinaryOperationNode): The BinaryOperationNode which will be interpreted.
         context (Context): The current existing context.
@@ -67,7 +74,9 @@ def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context) -> Num
         print(message)
 
 def VisitVariableAssignNode(node: VariableAssignNode, context: Context) -> Number:
-    """ Interpret a VariableAssignNode. 
+    """ Interpret a VariableAssignNode.
+    Haskell:
+        VisitVariableAssignNode :: VariableAssignNode -> Context -> Number 
     Parameters:
         node (VariableAssignNode): The VariableAssignNode which will be interpreted.
         context (Context): The current existing context.
@@ -81,6 +90,8 @@ def VisitVariableAssignNode(node: VariableAssignNode, context: Context) -> Numbe
 
 def VisitVariableAccessNode(node: VariableAccessNode, context: Context) -> Number:
     """ Interpret a VariableAccessNode. 
+    Haskell:
+        VisitVariableAccessNode :: VariableAccessNode -> Context -> Number
     Parameters:
         node (VariableAccessNode): The VariableAccessNode which will be interpreted.
         context (Context): The current existing context.
@@ -95,6 +106,8 @@ def VisitVariableAccessNode(node: VariableAccessNode, context: Context) -> Numbe
 
 def VisitListNode(node: ListNode, context: Context) -> Union[List[Number], Number]:
     """ Interpret a ListNode. 
+    Haskell:
+        VisitListNode :: ListNode -> Context -> Number | [Number]
     Parameters:
         node (ListNode): The ListNode which will be interpreted.
         context (Context): The current existing context.
@@ -107,6 +120,8 @@ def VisitListNode(node: ListNode, context: Context) -> Union[List[Number], Numbe
 
     def VisitElement(element: 'AllNodes') -> Number:
         """ Visit element of list.
+        Haskell:
+            VisitElement :: Node -> Number
         Parameters: 
             element (Node): An element from the ListNode which will be interpreted.
         Returns:
@@ -127,6 +142,8 @@ def VisitListNode(node: ListNode, context: Context) -> Union[List[Number], Numbe
 
 def VisitIfNode(node: IfNode, context: Context) -> Optional[Number]:
     """ Interpret an IfNode. 
+    Haskell:
+        VisitIfNode :: IfNode -> Context -> Number | None
     Parameters:
         node (IfNode): The IfNode which will be interpreted.
         context (Context): The current existing context.
@@ -144,11 +161,11 @@ def VisitIfNode(node: IfNode, context: Context) -> Optional[Number]:
 
 def VisitWhileNode(node: WhileNode, context: Context, elements: List = []) -> None:
     """ Interpret a WhileNode. 
+    Haskell:
+        VisitWhileNode :: WhileNode -> Context -> None
     Parameters:
         node (WhileNode): The WhileNode which will be interpreted.
         context (Context): The current existing context.
-    Returns:
-        
     """
     condition = VisitNode(node.condition, context)
     if condition.IsTrue():
@@ -158,6 +175,8 @@ def VisitWhileNode(node: WhileNode, context: Context, elements: List = []) -> No
 
 def VisitFunctionDefenitionNode(node: FunctionDefenitionNode, context: Context) -> Function:
     """ Interpret a FunctionDefenitionNode. 
+    Haskell:
+        VisitFunctionDefenitionNode :: FunctionDefenitionNode -> Context -> Function
     Parameters:
         node (FunctionDefenitionNode): The FunctionDefenitionNode which will be interpreted.
         context (Context): The current existing context.
@@ -172,6 +191,8 @@ def VisitFunctionDefenitionNode(node: FunctionDefenitionNode, context: Context) 
 
 def VisitFunctionCallNode(node: FunctionCallNode, context: Context) -> Number:
     """ Interpret a FunctionCallNode. 
+    Haskell:
+        VisitFunctionCallNode :: FunctionCallNode -> Context -> Number
     Parameters:
         node (FunctionCallNode): The FunctionCallNode which will be interpreted.
         context (Context): The current existing context.
@@ -183,4 +204,4 @@ def VisitFunctionCallNode(node: FunctionCallNode, context: Context) -> Number:
     arguments = list(chain(*map(lambda node: [*arguments, VisitNode(node, context)], node.arguments)))
     return function.Execute(arguments)
 
-AllNodes = [NumberNode, VariableAccessNode, BinaryOperationNode, VariableAccessNode, VariableAssignNode, IfNode, WhileNode, FunctionDefenitionNode, FunctionCallNode, ListNode, ReturnNode]
+AllNodes = Union[NumberNode, VariableAccessNode, BinaryOperationNode, VariableAccessNode, VariableAssignNode, IfNode, WhileNode, FunctionDefenitionNode, FunctionCallNode, ListNode, ReturnNode]
