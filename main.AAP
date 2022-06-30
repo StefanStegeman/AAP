@@ -1,6 +1,3 @@
-Wife fibbo OpenBanane n CloseBanane
-    If n <= 1 Then
-        n Else
-            Run fibbo OpenBanane Ape n Is n - 1  CloseBanane + Run fibbo OpenBanane Ape n Is n - 1 CloseBanane StopIf StopWife
-
-Run fibbo OpenBanane 10 CloseBanane
+Wife odd OpenBanane n CloseBanane
+    Ape res Is If n == 0 Then 0 Else Run a OpenBanane n - 1 CloseBanane
+    Throw res StopWife

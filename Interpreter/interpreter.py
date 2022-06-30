@@ -1,4 +1,4 @@
-import functools
+from grpc import Call
 from Interpreter.nodes import *
 from Interpreter.number import Number
 from Interpreter.tokens import *
@@ -6,13 +6,17 @@ from Interpreter.nodes import *
 from Interpreter.context import Context, SymbolDictionary
 from typing import Callable
 from itertools import chain
-from functools import reduce, partial
+from functools import reduce, partial, wraps
 from operator import add, is_not
 
 class List:
     """ List class which stores the elements of the list and the corresponding context. """
     def __init__(self, elements, context: Context = None) -> None:
-        """ Initialize the elements and the corresponding context."""
+        """ Initialize the elements and the corresponding context.
+        Parameters:
+            elements (Lst)    : The list with elements which will be stored.
+            context (Context) : The context which corresponds to when the list is being created.     
+        """
         self.elements = elements
         self.context = context
 
@@ -59,6 +63,13 @@ class Function:
         return VisitNode(self.body, context)
 
 def VisitNode(node: 'AllNodes', context: Context):
+    """ VisitNode 
+    Parameters:
+        node (Node)       :
+        context (Context) :
+    Returns:
+
+    """
     method = globals()[f'Visit{type(node).__name__}']
     try:
         return method(node, context)
@@ -68,13 +79,34 @@ def VisitNode(node: 'AllNodes', context: Context):
         print(message)
 
 def VisitNumberNode(node: NumberNode, context: Context):
+    """ VisitNumberNode 
+    Parameters:
+        node (NumberNode) :
+        context (Context) :
+    Returns:
+        number (Number)   : A new instance of the Number class.
+    """
     return Number(node.token.value, context)
 
 def VisitReturnNode(node: ReturnNode, context: Context):
+    """ VisitReturnNode 
+    Parameters:
+        node (ReturnNode) :
+        context (Context) :
+    Returns:
+        
+    """
     if node.node:
         return VisitNode(node.node, context)
 
 def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context):
+    """ VisitBinaryOperationNode 
+    Parameters:
+        node (BinaryOperationNode) :
+        context (Context)          :
+    Returns:
+        
+    """
     left = VisitNode(node.left, context)
     right = VisitNode(node.right, context)
     method = getattr(left, f'{type(node.operator).__name__}')
@@ -86,12 +118,26 @@ def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context):
         print(message)
 
 def VisitVariableAssignNode(node: VariableAssignNode, context: Context):
+    """ VisitVariableAssignNode 
+    Parameters:
+        node (VariableAssignNode) :
+        context (Context)         :
+    Returns:
+        
+    """
     name = node.token.value
     value = VisitNode(node.node, context)
     context.symbolDictionary.SetValue(name, value)
     return value
 
 def VisitVariableAccessNode(node: VariableAccessNode, context: Context):
+    """ VisitVariableAccessNode 
+    Parameters:
+        node (VariableAccessNode) :
+        context (Context)         :
+    Returns:
+        
+    """
     name = node.token.value
     value = context.symbolDictionary.GetValue(name)
     if not value:
@@ -99,6 +145,13 @@ def VisitVariableAccessNode(node: VariableAccessNode, context: Context):
     return value
 
 def VisitListNode(node: ListNode, context: Context):
+    """ VisitListNode 
+    Parameters:
+        node (ListNode)   :
+        context (Context) :
+    Returns:
+        
+    """
     returnNodes = map(lambda element: ReturnNode == type(element), node.elements)
     returns = reduce(add, returnNodes, 0)
 
@@ -117,6 +170,13 @@ def VisitListNode(node: ListNode, context: Context):
     return elements
 
 def VisitIfNode(node: IfNode, context: Context):
+    """ VisitIfNode 
+    Parameters:
+        node (IfNode)     :
+        context (Context) :
+    Returns:
+        
+    """
     for condition, expression in node.cases:
         value = VisitNode(condition, context)
         if value.IsTrue():
@@ -127,6 +187,13 @@ def VisitIfNode(node: IfNode, context: Context):
     return Number.null
 
 def VisitWhileNode(node: WhileNode, context: Context, elements: List = []):
+    """ VisitWhileNode 
+    Parameters:
+        node (WhileNode)  :
+        context (Context) :
+    Returns:
+        
+    """
     condition = VisitNode(node.condition, context)
     if not condition.IsTrue():
         return List(elements, context)
@@ -134,12 +201,26 @@ def VisitWhileNode(node: WhileNode, context: Context, elements: List = []):
     return VisitWhileNode(node, context, elements)
 
 def VisitFunctionAssignNode(node: FunctionAssignNode, context: Context):
+    """ VisitFunctionAssignNode 
+    Parameters:
+        node (FunctionAssignNode) :
+        context (Context)         :
+    Returns:
+        
+    """
     function = Function(node.token.value, node.arguments, node.body, context) 
     if node.token:
         context.symbolDictionary.SetValue(node.token.value, function)
     return function
 
 def VisitFunctionCallNode(node: FunctionCallNode, context: Context):
+    """ VisitFunctionCallNode 
+    Parameters:
+        node (FunctionCallNode) :
+        context (Context)       :
+    Returns:
+        
+    """
     arguments = [] 
     function = VisitNode(node.node, context)
     arguments = list(chain(*map(lambda node: [*arguments, VisitNode(node, context)], node.arguments)))

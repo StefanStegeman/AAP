@@ -1,6 +1,10 @@
 class Context:
-    """ This class contains the global symbols. """
-    def __init__(self, parent = None) -> None:
+    """ This class contains the global symbols and the available registers. """
+    def __init__(self, parent: 'Context' = None) -> None:
+        """ Initialize parent and create a SymbolDictionary. 
+        Parameters:
+            parent (Context): The parent context.
+        """
         self.parent = parent
         self.symbolDictionary = SymbolDictionary()
 

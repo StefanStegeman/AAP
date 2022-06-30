@@ -1,3 +1,4 @@
+import re
 import sys
 from Interpreter.number import Number
 from Interpreter.lexer import Lex
@@ -5,6 +6,7 @@ from Interpreter.parser import Parse
 from Interpreter.interpreter import VisitNode, Function
 from Interpreter.context import Context, SymbolDictionary
 from typing import List
+from Compiler.compiler import Compiler
 # Apes Among Programmers
 
 def RunFile(filename: str) -> List[int]:
@@ -22,6 +24,7 @@ def RunFile(filename: str) -> List[int]:
     tokens = Lex(filename=filename)
     ast = Parse(tokens, index=0)
     result = VisitNode(ast, context)
+    print(result)
     try:
         if len(result) == 1:
             return result[0]
@@ -48,6 +51,14 @@ def Shell() -> None:
             else:
                 print(result)
 
+def Compile(inputFilename, outputFilename):
+    tokens = Lex(filename=inputFilename)
+    ast = Parse(tokens, 0)
+    print(VisitNode(ast, context))
+    node = ast.elements[0]
+    compiler = Compiler(outputFilename, node)
+    compiler.VisitNode(ast)
+
 if __name__ == '__main__':
     symbols = SymbolDictionary()
     context = Context()
@@ -56,7 +67,19 @@ if __name__ == '__main__':
     symbols.SetValue("TRUE", Number.true)
     symbols.SetValue("FALSE", Number.false)
 
-    print(RunFile("main.AAP"))
+    # b = False
+    # if b:
+    #     print(RunFile("main.AAP"))
+    # else:
+    #     tokens = Lex(None, "main.AAP")
+    #     ast = Parse(tokens, 0)
+    #     nodeToCompile = ast.elements[0]
+    #     compiler = Compiler("main.AAP", "main.asm", nodeToCompile)
+    #     compiler.VisitNode(ast)
+    # print(RunFile("main.AAP"))
+
+    Compile("main.AAP", "odd.asm")
+    # Compile(sys.argv[1], sys.argv[2])
     # if len(sys.argv) == 2:
     #     print(RunFile(sys.argv[1]))
     # else:

@@ -23,6 +23,9 @@ class VariableAccessNode:
         """
         self.token = token
 
+    def __repr__(self) -> str:
+        return f"{self.token}"
+
 class BinaryOperationNode:
     """ Store the nodes and operator token needed for a binary operation in this Node. """
     def __init__(self, left: Union[VariableAccessNode, NumberNode], operator: 'OperatorTokens', right: Union[VariableAccessNode, NumberNode]) -> None:

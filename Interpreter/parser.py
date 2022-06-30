@@ -1,6 +1,19 @@
-from typing import Callable, Tuple, Union
+from typing import Callable, Tuple, Union, TypeVar
 from Interpreter.tokens import *
 from Interpreter.nodes import *
+
+A = TypeVar('A')
+B = TypeVar('B')
+C = TypeVar('C')
+
+def SkipUntil(f: Callable):
+    def SkipDecorator(token, tokens, index, *args):
+        if type(tokens[index]) == token:
+            index = IncrementIndex(tokens, index)
+            index, args = f(token, tokens, index, *args)
+            return SkipDecorator(token, tokens, index, args)
+        return index, args[0]
+    return SkipDecorator
 
 def IncrementIndex(tokens: List[Token], index: int) -> int:
     """ Increment the index value when it's not out of bounds.
@@ -13,7 +26,7 @@ def IncrementIndex(tokens: List[Token], index: int) -> int:
     """
     return index + 1 if index < len(tokens) - 1 else index
 
-def BinaryOperation(f: Callable, acceptedTokens: List[Token], tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
+def BinaryOperation(f: Callable[[A, B], C], acceptedTokens: List[Token], tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
     """ Create BinaryOperationNode.
     Parameters:
         f (Callable)         : Callable which is used to get the left and right nodes for.
@@ -50,7 +63,7 @@ def Arithmic(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode
     """
     return BinaryOperation(Term, (Plus, Minus), tokens, index)
 
-def Comparision(tokens: List[Token], index, int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
+def Comparison(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
     """ Comparison expression.
     Parameters:
         tokens (Lst)   : List with the tokens which will be parsed.
@@ -83,7 +96,7 @@ def Expression(tokens: List[Token], index: int) -> Tuple['Node', int]:
         index = IncrementIndex(tokens, index)
         expression, index = Expression(tokens, index)
         return VariableAssignNode(name, expression), index
-    return BinaryOperation(Comparision, (And, Or), tokens, index)
+    return BinaryOperation(Comparison, (And, Or), tokens, index)
 
 def IfC(tokens: List[Token], index: int) -> Tuple[ListNode, int]:
     """ IfC.
@@ -148,7 +161,6 @@ def IfCases(token: Token, tokens: List[Token], index: int):
     condition, index = Expression(tokens, index)
 
     if not type(tokens[index]) == Then:
-        print(f"Expected {Then.value} token..")
         raise Exception(f"Expected {Then.value} token..")
 
     index = IncrementIndex(tokens, index)
@@ -242,10 +254,10 @@ def FunctionDefenition(tokens: List[Token], index: int) -> Tuple[FunctionAssignN
                     i = IncrementIndex(tokenList, i)
                 else:
                     raise Exception(f"Expected Identifier..")
-                return SetParameters()
-            return
+                return SetParameters(tokenList, i)
+            return i
             
-        SetParameters(tokens, index)  
+        index = SetParameters(tokens, index)  
 
         if type(tokens[index]) != RPar:
             print(f"Expected {RPar.value} token..")
@@ -294,7 +306,8 @@ def CallFunction(tokens: List[Token], index: int) -> Tuple[Union[NumberNode, Var
                     epxr, i = Expression(tokenList, i)
                     args.append(expr)
                     return SetArguments(tokenList, i, args)
-                return
+                return i
+            index = SetArguments(tokens, index, arguments)
             if type(tokens[index]) != RPar:
                 print("Expected RPar token..")
                 raise Exception("Expected RPar token..")
@@ -369,27 +382,34 @@ def Statements(tokens: List[Token], index: int) -> Tuple[ListNode, int]:
         index (int)     : The incremented index.
     """
     statements = []
-    while type(tokens[index]) == NewLine:
-        index = IncrementIndex(tokens, index)
     
+    def func(tokenList, i):
+        if type(tokenList[i]) == NewLine:
+            i = IncrementIndex(tokenList, i)
+            return func(tokenList, i)
+        return i
+    
+    index = func(tokens, index)
     statement, index = Statement(tokens, index)
     statements.append(statement)
 
-    moreStatements = True
-    while moreStatements:
-        newLine = 0
-        while type(tokens[index]) == NewLine:
-            index = IncrementIndex(tokens, index)
-            newLine += 1
-        if newLine == 0:
-            moreStatements = False
-        if not moreStatements: break
+    @SkipUntil
+    def SkipNewLines(token, tokens, index, skipped):
+        skipped += 1
+        return index, skipped
 
-        statement, index = Try(index, Statement(tokens, index))
+    def GetStatements(tokenList, i):
+        newLine = 0
+        i, newLine = SkipNewLines(NewLine, tokens, i, newLine)   
+        if newLine == 0:
+            return i
+        statement, i = Try(i, Statement(tokens, i))
         if not statement:
-            moreStatements = False
-            continue
+            return i
         statements.append(statement)
+        return GetStatements(tokenList, i)
+
+    index = GetStatements(tokens, index)
     return ListNode(statements), index
 
 def Term(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
