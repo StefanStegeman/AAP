@@ -1,2 +1,0 @@
-Wife odd OpenBanane n CloseBanane
-    If n == 0 Then 0 Else Run even OpenBanane Ape n Is n - 1 CloseBanane StopWife

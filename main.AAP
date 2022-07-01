@@ -1,2 +1,3 @@
-Wife if OpenBanane a CloseBanane
-    If a != a Then Throw 1 Else Throw 2 StopWife
+Wife elseTest OpenBanane a CloseBanane
+    Ape result Is If a == 10 Then 1 Else 2 
+    Throw result StopWife

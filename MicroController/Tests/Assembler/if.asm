@@ -1,9 +1,9 @@
 .cpu cortex-m0
 .text
 .align 2
-.global if
+.global ifTest
 
-if:
+ifTest:
 	PUSH 	{ LR }
 	SUB 	R2, R0, R0
 	NEG 	R1, R2

@@ -1,9 +1,9 @@
 .cpu cortex-m0
 .text
 .align 2
-.global or
+.global orTest
 
-or:
+orTest:
 	PUSH 	{ R4, R5, R6, LR }
 	SUB 	R2, R0, R0
 	SUB 	R3, R2, #1

@@ -1,9 +1,9 @@
 .cpu cortex-m0
 .text
 .align 2
-.global and
+.global andTest
 
-and:
+andTest:
 	PUSH 	{ R4, R5, R6, LR }
 	SUB 	R3, R0, R0
 	NEG 	R2, R3
