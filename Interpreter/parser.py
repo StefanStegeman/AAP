@@ -47,8 +47,15 @@ def GetArguments(tokens: List[Token], index: int, arguments: List['Node']) -> Tu
     """
     if type(tokens[index]) == Comma:
         index = IncrementIndex(tokens, index)
-        argument, index = Expression(tokens, index)
-        arguments.append(argument)
+        if type(tokens[index]) == Identifier:
+            arguments.append(tokens[index])
+            index = IncrementIndex(tokens, index)
+        elif type(tokens[index]) in (Int, Float):
+            argument, index = Expression(tokens, index)
+            arguments.append(argument)
+        else:
+            if type(tokens[index]) != RPar:
+                raise Exception(f"Expected Identifier or '{RPar.value}'")
         return GetArguments(tokens, index, arguments)
     return index, arguments
 

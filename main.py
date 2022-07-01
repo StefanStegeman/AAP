@@ -1,4 +1,4 @@
-from Compiler.compiler import Compile
+from Compiler.compiler import Compiler
 from Compiler.number import Number
 from Interpreter.context import Context, SymbolDictionary
 from Interpreter.interpreter import VisitNode
@@ -50,9 +50,9 @@ def CompileFile(input: str, output: str) -> None:
     """
     tokens = Lex(filename=input)
     ast = Parse(tokens, index=0)
-    VisitNode(ast, context)
     node = ast.elements[0]
-    Compile(output, node, ast)
+    compiler = Compiler(node)
+    compiler.Compile(ast, output)
 
 if __name__ == '__main__':
     symbols = SymbolDictionary()
@@ -64,5 +64,6 @@ if __name__ == '__main__':
     elif len(sys.argv) == 3:
         CompileFile(sys.argv[1], sys.argv[2])
     else:
-        CompileFile("main.AAP", "main.asm")
+        InterpretFile("main.AAp")
+        # CompileFile("main.AAP", "main.asm")
         print("I need an input file to do anything..")

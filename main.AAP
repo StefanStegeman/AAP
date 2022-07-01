@@ -1,6 +1,2 @@
-Wife sommig OpenBanane n CloseBanane
-    Ape result Is 0
-    SpinWhile n >= 1 Then
-        Ape result Is result + n
-        Ape n Is n - 1 StopSpinning
-    Throw result StopWife
+Wife if OpenBanane a CloseBanane
+    If a != a Then Throw 1 Else Throw 2 StopWife
