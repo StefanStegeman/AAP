@@ -1,6 +1,0 @@
-Wife factorial OpenBanane n CloseBanane
-    Ape result Is 1
-    SpinWhile n > 0 Then
-        Ape result Is result * n 
-        Ape n Is n - 1 StopSpinning
-    Throw result StopWife
