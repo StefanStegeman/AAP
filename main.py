@@ -64,6 +64,4 @@ if __name__ == '__main__':
     elif len(sys.argv) == 3:
         CompileFile(sys.argv[1], sys.argv[2])
     else:
-        InterpretFile("main.AAp")
-        # CompileFile("main.AAP", "main.asm")
         print("I need an input file to do anything..")

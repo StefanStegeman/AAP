@@ -1,0 +1,5 @@
+Wife odd OpenBanane n CloseBanane
+    Ape res Is If n == 0 Then 
+        0 Else 
+            Run even OpenBanane n - 1 CloseBanane StopIf
+    Throw res StopWife

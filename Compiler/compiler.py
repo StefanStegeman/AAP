@@ -156,7 +156,6 @@ class Compiler():
             """
             returnNodes = map(lambda element: ReturnNode == type(element), node.elements)
             returns = reduce(add, returnNodes, 0)
-            print(returns)
             def VisitElement(element: 'AllNodes') -> Number:
                 """ Visit element of list.
                 Haskell:
