@@ -34,7 +34,7 @@ def SplitLine(line: str) -> List[str]:
         return [""]
     head, *tail = line
     elements = SplitLine(tail)
-    if head in " \t\r":
+    if head in " ":
         elements = [""] + elements
     elif head in "\n":
         elements = [head[:-1]] + [head[-1]] + elements

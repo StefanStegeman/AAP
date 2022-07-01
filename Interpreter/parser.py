@@ -47,10 +47,7 @@ def GetArguments(tokens: List[Token], index: int, arguments: List['Node']) -> Tu
     """
     if type(tokens[index]) == Comma:
         index = IncrementIndex(tokens, index)
-        if type(tokens[index]) == Identifier:
-            arguments.append(tokens[index])
-            index = IncrementIndex(tokens, index)
-        elif type(tokens[index]) in (Int, Float):
+        if type(tokens[index]) in (Int, Float, Identifier):
             argument, index = Expression(tokens, index)
             arguments.append(argument)
         else:
@@ -85,8 +82,6 @@ def BinaryOperation(f: Callable[[A, B], C], acceptedTokens: List[Token], tokens:
         node (Node): The resulting node.
         index (int): The incremented index.  
     """
-    left, index = f(tokens, index)
-
     def AssignNode(lhs: 'Node', i: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
         """ This function assigns the BinaryOperation node when 
         the current token is in the accepted token list. 
@@ -107,7 +102,22 @@ def BinaryOperation(f: Callable[[A, B], C], acceptedTokens: List[Token], tokens:
             return AssignNode(lhs, i)
         else:
             return lhs, i
+
+    left, index = f(tokens, index)
     return AssignNode(left, index)
+    
+def Term(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
+    """ Parse a Term.
+    Haskell notation:
+        Term :: [Token] -> Integer -> Tuple
+    Parameters:
+        tokens (Lst): List with the tokens which will be parsed.
+        index (int): The index which will be used throughout the parse process.
+    Returns
+        node (Node): The resulting node.
+        index (int): The incremented index
+    """
+    return BinaryOperation(Factor, (Multiply, Divide), tokens, index)
 
 def Arithmic(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
     """ Parse Arithmic expression.
@@ -440,18 +450,6 @@ def Statements(tokens: List[Token], index: int) -> Tuple[ListNode, int]:
     index = GetStatements(tokens, index)
     return ListNode(statements), index
 
-def Term(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
-    """ Parse a Term.
-    Haskell notation:
-        Term :: [Token] -> Integer -> Tuple
-    Parameters:
-        tokens (Lst): List with the tokens which will be parsed.
-        index (int): The index which will be used throughout the parse process.
-    Returns
-        node (Node): The resulting node.
-        index (int): The incremented index
-    """
-    return BinaryOperation(Factor, (Multiply, Divide), tokens, index)
 
 def Parse(tokens: List[Token], index: int) -> ListNode:
     """ Parse the tokens and create an AST.

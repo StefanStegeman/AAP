@@ -11,10 +11,7 @@ class Context:
         """
         self.parent = parent
         self.symbolDictionary = SymbolDictionary()
-
-        self.registers = ["R0", "R1", "R2", "R3", "R4", "R5", "R6", "R7"]
-        self.labels = [".L2", ".L4", ".L6", ".L8", ".L10"]
-
+    
 class SymbolDictionary:
     def __init__(self, parent: 'SymbolDictionary' =None) -> None:
         """ Initialize the parent and create new dictionary. 
