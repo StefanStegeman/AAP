@@ -11,7 +11,7 @@ import traceback
 class Compiler():
     def __init__(self, FunctionDefenitionNode: FunctionDefenitionNode) -> None:
         """ Initialize the instructions and context. 
-        Haskell:
+        Haskell notation notation:
             Init :: FunctionDefenitionNode -> None
         Parameters:
             FunctionDefenitionNode (FunctionDefenitionNode): The function defenition node to write the name in the assembler file. """
@@ -20,7 +20,7 @@ class Compiler():
         
     def Compile(self, ast: ListNode, output: str) -> None:
         """ Compile the Abstract Syntax Tree and write it to a file. 
-        Haskell:
+        Haskell notation notation:
             Compile :: ListNode -> String -> None
         Parameters:
             ast (ListNode): The AST which will be compiled.
@@ -52,7 +52,7 @@ class Compiler():
     def VisitNode(self, node: 'AllNodes', context: Context = None) -> Union[FunctionCallNode, List[Number], Number]:
         """ Visit the passed Node's function and compile this.
         Every node has a Visit{node} function which is responsible for compiling that node.
-        Haskell:
+        Haskell notation notation:
             VisitNode :: Node -> Context -> FunctionCallnode | [Number] | Number
         Parameters:
             node (Node): The node which will be compiled.
@@ -62,7 +62,7 @@ class Compiler():
         """
         def VisitNumberNode(node: NumberNode, context: Context) -> Number:
             """ Compile a NumberNode. 
-            Haskell:
+            Haskell notation notation:
                 VisitNumberNode :: NumberNode -> Context -> Number
             Parameters:
                 node (NumberNode): The NumberNode which will be compiled.
@@ -77,7 +77,7 @@ class Compiler():
 
         def VisitReturnNode(node: ReturnNode, context: Context) -> Number:
             """ Compile a ReturnNode. 
-            Haskell:
+            Haskell notation notation:
                 VisitReturnNode :: ReturnNode -> Context -> Number
             Parameters:
                 node (ReturnNode): The ReturnNode which will be compiled.
@@ -94,7 +94,7 @@ class Compiler():
         
         def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context) -> Number:
             """ Compile a BinaryOperation. 
-            Haskell:
+            Haskell notation notation:
                 VisitBinaryOperationNode :: BinaryOperationNode -> Context -> Number
             Parameters:
                 node (BinaryOperationNode): The BinaryOperationNode which will be compiled.
@@ -115,7 +115,7 @@ class Compiler():
 
         def VisitVariableAssignNode(node: VariableAssignNode, context: Context) -> Number:
             """ Compile a VariableAssignNode. 
-            Haskell:
+            Haskell notation notation:
                 VisitVariableAssignNode :: VariableAssignNode -> Context -> Number
             Parameters:
                 node (VariableAssignNode): The VariableAssignNode which will be compiled.
@@ -130,7 +130,7 @@ class Compiler():
 
         def VisitVariableAccessNode(node: VariableAccessNode, context: Context) -> Number:
             """ Compile a VariableAccessNode. 
-            Haskell:
+            Haskell notation notation:
                 VisitVariableAccessNode :: VariableAccessNode -> Context -> Number
             Parameters:
                 node (VariableAccessNode): The VariableAccessNode which will be compiled.
@@ -146,7 +146,7 @@ class Compiler():
 
         def VisitListNode(node: ListNode, context: Context) -> Number:
             """ Compile a ListNode. 
-            Haskell:
+            Haskell notation notation:
                 VisitListNode :: ListNode -> Context -> Number
             Parameters:
                 node (ListNode): The ListNode which will be compiled.
@@ -158,7 +158,7 @@ class Compiler():
             returns = reduce(add, returnNodes, 0)
             def VisitElement(element: 'AllNodes') -> Number:
                 """ Visit element of list.
-                Haskell:
+                Haskell notation notation:
                     VisitElement :: Node -> Number
                 Parameters: 
                     element (Node): An element from the ListNode which will be interpreted.
@@ -180,7 +180,7 @@ class Compiler():
 
         def VisitIfNode(node: IfNode, context: Context) -> Number:
             """ Compile a IfNode. 
-            Haskell:
+            Haskell notation notation:
                 VisitIfNode :: IfNode -> Context -> Number
             Parameters:
                 node (IfNode): The IfNode which will be compiled.
@@ -213,7 +213,7 @@ class Compiler():
 
         def VisitWhileNode(node: WhileNode, context: Context) -> None:
             """ Compile a WhileNode. 
-            Haskell:
+            Haskell notation notation:
                 VisitWhileNode :: WhileNode -> Context -> None
             Parameters:
                 node (WhileNode): The WhileNode which will be compiled.
@@ -227,7 +227,7 @@ class Compiler():
 
         def VisitFunctionDefenitionNode(node: FunctionDefenitionNode, context: Context) -> Function:
             """ Compile a FunctionDefenitionNode.
-            Haskell:
+            Haskell notation notation:
                 VisitFunctionDefenitionNode :: FunctionDefenitionNode -> Context -> Function
             Parameters:
                 node (FunctionDefenitionNode): The FunctionDefenitionNode which will be compiled.
@@ -244,7 +244,7 @@ class Compiler():
 
         def VisitFunctionCallNode(node: FunctionCallNode, context: Context) -> None:
             """ Compile a FunctionCallNode. 
-            Haskell:
+            Haskell notation notation:
                 VisitFunctionCallNode :: FunctionCallNode -> Context -> None
             Parameters:
                 node (FunctionCallNode): The FunctionCallNode which will be compiled.

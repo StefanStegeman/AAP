@@ -11,7 +11,7 @@ from operator import add, is_not
 def VisitNode(node: 'AllNodes', context: Context) -> Number:
     """ Visit the passed Node's function and interpret this.
     Every node has a Visit{node} function which is responsible for interpreting that node. 
-    Haskell:
+    Haskell notation:
         VisitNode :: Node -> Context -> Number
     Parameters:
         node (Node): The node which will be interpreted.
@@ -29,7 +29,7 @@ def VisitNode(node: 'AllNodes', context: Context) -> Number:
 
 def VisitNumberNode(node: NumberNode, context: Context) -> Number:
     """ Interpret a NumberNode. 
-    Haskell:
+    Haskell notation:
         VisitNumberNode :: NumberNode -> Context -> Number
     Parameters:
         node (NumberNode): The NumberNode which will be interpreted.
@@ -41,7 +41,7 @@ def VisitNumberNode(node: NumberNode, context: Context) -> Number:
 
 def VisitReturnNode(node: ReturnNode, context: Context) -> Optional[Number]:
     """ Interpret a ReturnNode. 
-    Haskell:
+    Haskell notation:
         VisitReturnNode :: ReturnNode -> Context -> Number | None
     Parameters:
         node (ReturnNode): The ReturnNode which will be interpreted.
@@ -55,7 +55,7 @@ def VisitReturnNode(node: ReturnNode, context: Context) -> Optional[Number]:
 
 def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context) -> Number:
     """ Interpret a BinaryOperationNode. 
-    Haskell:
+    Haskell notation:
         VisitBinaryOperationNode :: BinaryOperationNode -> Context -> Number
     Parameters:
         node (BinaryOperationNode): The BinaryOperationNode which will be interpreted.
@@ -75,7 +75,7 @@ def VisitBinaryOperationNode(node: BinaryOperationNode, context: Context) -> Num
 
 def VisitVariableAssignNode(node: VariableAssignNode, context: Context) -> Number:
     """ Interpret a VariableAssignNode.
-    Haskell:
+    Haskell notation:
         VisitVariableAssignNode :: VariableAssignNode -> Context -> Number 
     Parameters:
         node (VariableAssignNode): The VariableAssignNode which will be interpreted.
@@ -90,7 +90,7 @@ def VisitVariableAssignNode(node: VariableAssignNode, context: Context) -> Numbe
 
 def VisitVariableAccessNode(node: VariableAccessNode, context: Context) -> Number:
     """ Interpret a VariableAccessNode. 
-    Haskell:
+    Haskell notation:
         VisitVariableAccessNode :: VariableAccessNode -> Context -> Number
     Parameters:
         node (VariableAccessNode): The VariableAccessNode which will be interpreted.
@@ -106,7 +106,7 @@ def VisitVariableAccessNode(node: VariableAccessNode, context: Context) -> Numbe
 
 def VisitListNode(node: ListNode, context: Context) -> Union[List[Number], Number]:
     """ Interpret a ListNode. 
-    Haskell:
+    Haskell notation:
         VisitListNode :: ListNode -> Context -> Number | [Number]
     Parameters:
         node (ListNode): The ListNode which will be interpreted.
@@ -120,7 +120,7 @@ def VisitListNode(node: ListNode, context: Context) -> Union[List[Number], Numbe
 
     def VisitElement(element: 'AllNodes') -> Number:
         """ Visit element of list.
-        Haskell:
+        Haskell notation:
             VisitElement :: Node -> Number
         Parameters: 
             element (Node): An element from the ListNode which will be interpreted.
@@ -142,7 +142,7 @@ def VisitListNode(node: ListNode, context: Context) -> Union[List[Number], Numbe
 
 def VisitIfNode(node: IfNode, context: Context) -> Optional[Number]:
     """ Interpret an IfNode. 
-    Haskell:
+    Haskell notation:
         VisitIfNode :: IfNode -> Context -> Number | None
     Parameters:
         node (IfNode): The IfNode which will be interpreted.
@@ -161,7 +161,7 @@ def VisitIfNode(node: IfNode, context: Context) -> Optional[Number]:
 
 def VisitWhileNode(node: WhileNode, context: Context, elements: List = []) -> None:
     """ Interpret a WhileNode. 
-    Haskell:
+    Haskell notation:
         VisitWhileNode :: WhileNode -> Context -> None
     Parameters:
         node (WhileNode): The WhileNode which will be interpreted.
@@ -175,7 +175,7 @@ def VisitWhileNode(node: WhileNode, context: Context, elements: List = []) -> No
 
 def VisitFunctionDefenitionNode(node: FunctionDefenitionNode, context: Context) -> Function:
     """ Interpret a FunctionDefenitionNode. 
-    Haskell:
+    Haskell notation:
         VisitFunctionDefenitionNode :: FunctionDefenitionNode -> Context -> Function
     Parameters:
         node (FunctionDefenitionNode): The FunctionDefenitionNode which will be interpreted.
@@ -191,7 +191,7 @@ def VisitFunctionDefenitionNode(node: FunctionDefenitionNode, context: Context) 
 
 def VisitFunctionCallNode(node: FunctionCallNode, context: Context) -> Number:
     """ Interpret a FunctionCallNode. 
-    Haskell:
+    Haskell notation:
         VisitFunctionCallNode :: FunctionCallNode -> Context -> Number
     Parameters:
         node (FunctionCallNode): The FunctionCallNode which will be interpreted.

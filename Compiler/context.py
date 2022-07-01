@@ -5,7 +5,7 @@ class Context:
     """ This class contains the global symbols and the available registers. """
     def __init__(self, parent: 'Context' = None) -> None:
         """ Initialize parent and create a SymbolDictionary. 
-        Haskell:
+        Haskell notation notation:
             Init :: Context -> None
         Parameters:
             parent (Context): The parent context.
@@ -19,7 +19,7 @@ class Context:
 class SymbolDictionary:
     def __init__(self, parent: 'SymbolDictionary'=None) -> None:
         """ Initialize the parent and create new dictionary. 
-        Haskell:
+        Haskell notation notation:
             Init :: SymbolDictionary -> None
         Parameters:
             parent (SymbolDictionary): The parent SymbolDictionary.
@@ -29,7 +29,7 @@ class SymbolDictionary:
 
     def GetValue(self, name) -> Optional[Node]:
         """ This function tries to get the value of the passed name.
-        Haskell:
+        Haskell notation notation:
             GetValue :: String -> Node | None
         Parameters:
             name (str): The dictionary key.
@@ -43,7 +43,7 @@ class SymbolDictionary:
 
     def SetValue(self, name: str, value: 'Node') -> None:
         """ This function creates a dictionary entry with the name and value. 
-        Haskell:
+        Haskell notation notation:
             SetValue :: String -> Node -> None
         Parameters:
             name (str): The name of the key.

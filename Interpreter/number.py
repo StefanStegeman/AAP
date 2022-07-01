@@ -4,7 +4,7 @@ from Interpreter.context import Context
 class Number:
     def __init__(self, value: Union[int, float], context: Context = None) -> None:
         """ Initialize the passed value and context.
-        Haskell:
+        Haskell notation:
             Init :: Integer | Float -> Context -> None
         Parameters:
             value (int, float): The value for the number.
@@ -23,7 +23,7 @@ class Number:
 
     def Plus(self, other: 'Number') -> 'Number':
         """ This function adds other.value with self.value.
-        Haskell:
+        Haskell notation:
             Plus :: Number -> Number
         Parameters:
             other (Number): The other number to add with.
@@ -34,7 +34,7 @@ class Number:
 
     def Minus(self, other: 'Number') -> 'Number':
         """ This function subtracts other.value with self.value. 
-        Haskell:
+        Haskell notation:
             Minus :: Number -> Number
         Parameters:
             other (Number): The other number to subtract with.
@@ -45,7 +45,7 @@ class Number:
 
     def Multiply(self, other: 'Number') -> 'Number':
         """ This function multiplies self.value with other.value.
-        Haskell:
+        Haskell notation:
             Multiply :: Number -> Number 
         Parameters:
             other (Number): The other number to multiply with.
@@ -56,7 +56,7 @@ class Number:
 
     def Divide(self, other: 'Number') -> 'Number':
         """ This function divides self.value with other.value. 
-        Haskell:
+        Haskell notation:
             Divide :: Number -> Number
         Parameters:
             other (Number): The other number to divide with.
@@ -67,7 +67,7 @@ class Number:
 
     def Equals(self, other: 'Number') -> 'Number':
         """ This function checks whether self.value is equal compared with other.value. 
-        Haskell:
+        Haskell notation:
             Equals :: Number -> Number
         Parameters:
             other (Number): The other number to compare with.
@@ -78,7 +78,7 @@ class Number:
     
     def NotEquals(self, other: 'Number') -> 'Number':
         """ This function checks whether self.value is not equal compared to other.value. 
-        Haskell:
+        Haskell notation:
             NotEquals :: Number -> Number
         Parameters:
             other (Number): The other number to compare with.
@@ -89,7 +89,7 @@ class Number:
 
     def GreaterThan(self, other: 'Number') -> 'Number':
         """ This function checks whether self.value is greater than other.value. 
-        Haskell:
+        Haskell notation:
             GreaterThan :: Number -> Number
         Parameters:
             other (Number): The other number to compare with.
@@ -100,7 +100,7 @@ class Number:
 
     def GreaterThanEquals(self, other: 'Number') -> 'Number':
         """ This function checks whether self.value is greater than or equal to other.value. 
-        Haskell:
+        Haskell notation:
             GreaterThanEquals :: Number -> Number
         Parameters:
             other (Number): The other number to compare with.
@@ -111,7 +111,7 @@ class Number:
 
     def LessThan(self, other: 'Number') -> 'Number':
         """ This function checks whether self.value is less than other.value.
-        Haskell:
+        Haskell notation:
             LessThan :: Number -> Number 
         Parameters:
             other (Number): The other number to compare with.
@@ -122,7 +122,7 @@ class Number:
 
     def LessThanEquals(self, other: 'Number') -> 'Number':
         """ This function checks whether self.value is less than or equal to other.value. 
-        Haskell:
+        Haskell notation:
             LessThanEquals :: Number -> Number
         Parameters:
             other (Number): The other number to compare with.
@@ -133,7 +133,7 @@ class Number:
 
     def And(self, other: 'Number') -> 'Number':
         """ This function checks whether self.value and other.value are true. 
-        Haskell:
+        Haskell notation:
             And :: Number -> Number
         Parameters:
             other (Number): The other number to compare with.
@@ -144,7 +144,7 @@ class Number:
 
     def Or(self, other: 'Number') -> 'Number':
         """ This function checks whether self.value or other.value are true. 
-        Haskell:
+        Haskell notation:
             Or :: Number -> Number
         Parameters:
             other (Number): The other number to compare with.
@@ -155,7 +155,7 @@ class Number:
 
     def IsTrue(self) -> bool:
         """ This function checks whether self.value is true. 
-        Haskell:
+        Haskell notation:
             IsTrue :: Boolean
         Returns:
             number (Number): The result of the check. This can be either 1 (true) or 0 (false)

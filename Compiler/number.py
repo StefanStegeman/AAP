@@ -4,7 +4,7 @@ from Compiler.context import Context
 class Number:
     def __init__(self, value: Union[int, float], context: Context, register: str) -> None:
         """ Initialize the passed value, context and register. 
-        Haskell:
+        Haskell notation notation:
             Init :: Int | Float -> Context -> String -> None
         Parameters:
             value (int, float): The value for the number.
@@ -21,7 +21,7 @@ class Number:
 
     def Plus(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function adds other.value with self.value.
-        Haskell:
+        Haskell notation notation:
             Plus :: Number -> Context -> [String & Set] -> Tuple
         Parameters:
             other (Number): The other number to add with.
@@ -34,7 +34,7 @@ class Number:
 
     def Minus(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function subtracts other.value with self.value. 
-        Haskell:
+        Haskell notation notation:
             Minus :: Number -> Context -> [String & Set] -> Tuple
         Parameters:
             other (Number): The other number to subtract with.
@@ -47,7 +47,7 @@ class Number:
 
     def Multiply(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function multiplies self.value with other.value. 
-        Haskell:
+        Haskell notation notation:
             Multiply :: Number -> Context -> [String & Set] -> Tuple
         Parameters:
             other (Number): The other number to multiply with.
@@ -60,7 +60,7 @@ class Number:
 
     def Divide(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function divides self.value with other.value. 
-        Haskell:
+        Haskell notation notation:
             Divide :: Number -> Context -> [String & Set] -> Tuple
         Parameters:
             other (Number): The other number to divide with.
@@ -82,7 +82,7 @@ class Number:
 
     def Equals(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function checks whether self.value is equal compared with other.value.
-        Haskell:
+        Haskell notation notation:
             Equals :: Number -> Context -> [String & Set] -> Tuple 
         Parameters:
             other (Number) : The other number to compare with.
@@ -100,7 +100,7 @@ class Number:
     
     def NotEquals(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function checks whether self.value is not equal compared to other.value. 
-        Haskell:
+        Haskell notation notation:
             NotEquals :: Number -> Context -> [String & Set] -> Tuple
         Parameters:
             other (Number) : The other number to compare with.
@@ -118,7 +118,7 @@ class Number:
 
     def GreaterThan(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function checks whether self.value is greater than other.value. 
-        Haskell:
+        Haskell notation notation:
             GreaterThan :: Number -> Context -> [String & Set] -> Tuple
         Parameters:
             other (Number) : The other number to compare with.
@@ -137,7 +137,7 @@ class Number:
 
     def GreaterThanEquals(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function checks whether self.value is greater than or equal to other.value. 
-        Haskell:
+        Haskell notation notation:
             GreaterThanEquals :: Number -> Context -> [String & Set] -> Tuple
         Parameters:
             other (Number) : The other number to compare with.
@@ -156,7 +156,7 @@ class Number:
 
     def LessThan(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function checks whether self.value is less than other.value. 
-        Haskell:
+        Haskell notation notation:
             LessThan :: Number -> Context -> [String & Set] -> Tuple
         Parameters:
             other (Number) : The other number to compare with.
@@ -176,7 +176,7 @@ class Number:
 
     def LessThanEquals(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function checks whether self.value is less than or equal to other.value. 
-        Haskell:
+        Haskell notation notation:
             LessThanEquals :: Number -> Context -> [String & Set] -> Tuple
         Parameters:
             other (Number) : The other number to compare with.
@@ -195,7 +195,7 @@ class Number:
 
     def And(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function checks whether self.value and other.value are true. 
-        Haskell:
+        Haskell notation notation:
             And :: Number -> Context -> [String & Set] -> Tuple
         Parameters:
             other (Number) : The other number to compare with.
@@ -217,7 +217,7 @@ class Number:
 
     def Or(self, other: 'Number', context: Context, instructions: List[Union[str, set]]) -> 'Number':
         """ This function checks whether self.value or other.value are true.
-        Haskell:
+        Haskell notation notation:
             Or :: Number -> Context -> [String & Set] -> Tuple 
         Parameters:
             other (Number) : The other number to compare with.
@@ -239,7 +239,7 @@ class Number:
 
     def IsTrue(self) -> bool:
         """ This function checks whether self.value is true. 
-        Haskell:
+        Haskell notation notation:
             IsTrue :: Boolean
         Returns:
             number (Number): The result of the check. This can be either 1 (true) or 0 (false)

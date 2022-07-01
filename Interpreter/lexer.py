@@ -7,7 +7,7 @@ C = TypeVar('C')
 
 def Lex(text: str = None, filename: str = None) -> List[Token]:
     """ Lex the file or text which has been passed into the function.
-    Haskell:
+    Haskell notation:
         Lex :: String -> String -> [Token]
     Parameters:
         text (str): A line of text which can be lexed into tokens.
@@ -21,7 +21,7 @@ def Lex(text: str = None, filename: str = None) -> List[Token]:
 
 def SplitLine(line: str) -> List[str]:
     """ Split the passed line into seperate strings.
-    Haskell:
+    Haskell notation:
         SplitLine :: String -> [String]
     NewLines are important to add to the list of strings since
     they otherwise won't be recognized into a NewLine token.
@@ -45,7 +45,7 @@ def SplitLine(line: str) -> List[str]:
 
 def CreateTokens(f: Callable[[A, B], C], text: List[str]) -> List[Token]:
     """ Create tokens by calling a function on all elements of the list.
-    Haskell:
+    Haskell notation:
         CreateTokens :: Callable -> [String] -> [Token]
     Parameters:
         f (Callable): The function which gets called on all elements.
@@ -59,7 +59,7 @@ def CreateTokens(f: Callable[[A, B], C], text: List[str]) -> List[Token]:
 
 def ReadFile(filename: str) -> List[str]:
     """ Read file and convert it to a list with strings.
-    Haskell:
+    Haskell notation:
         ReadFile :: String -> [String]
     Parameters:
         filename (str): The name of the file which will be read.
@@ -71,7 +71,7 @@ def ReadFile(filename: str) -> List[str]:
 
 def IsFloat(string: str) -> bool:
     """ Check if the passed string is a float.
-    Haskell:
+    Haskell notation:
         
     Parameters:
         string (str): The string which will be checked.
@@ -86,7 +86,7 @@ def IsFloat(string: str) -> bool:
 
 def AssignTokens(lst: List[str], tokens: List[Token] = []) -> List[Token]:
     """ Assign tokens from the list of strings to the tokens list.
-    Haskell:
+    Haskell notation:
         
     Parameters:
         lst (Lst): List filled with strings which will be converted.

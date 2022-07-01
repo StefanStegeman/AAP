@@ -9,13 +9,13 @@ C = TypeVar('C')
 
 def SkipDecorator(f: Callable[[Token, List[Token], int, Tuple], Tuple[int, A]]) -> Callable[[Token, List[Token], int, Tuple], Tuple[int, A]]:
     """ This is a decorator which allows the user to skip a certain token. 
-    Haskell:
+    Haskell notation:
         SkipDecorator :: Callable -> Callable
     """
     @wraps(f)
     def SkipWrapper(token: Token, tokens: List[Token], index: int, *args: Tuple[int, A]) -> Union[int, A]:
         """ The wrapper function of the decorator.
-        Haskell:
+        Haskell notation:
             SkipWrapper :: Token -> [Token] -> Integer -> Tuple -> Integer | A
         Parameters:
             token (Token): The token which will be skipped. 
@@ -35,7 +35,7 @@ def SkipDecorator(f: Callable[[Token, List[Token], int, Tuple], Tuple[int, A]]) 
 def GetArguments(tokens: List[Token], index: int, arguments: List['Node']) -> Tuple[int, List['Node']]:
     """ Get the arguments for a function.
     This function retrieves all arguments from the tokenlist which belong to a function.
-    Haskell:
+    Haskell notation:
         GetArguments :: [Token] -> Integer -> [Node] -> Tuple        
     Parameters:
         tokens (Lst): List with all the tokens which will be parsed. 
@@ -61,7 +61,7 @@ def GetArguments(tokens: List[Token], index: int, arguments: List['Node']) -> Tu
 
 def IncrementIndex(tokens: List[Token], index: int) -> int:
     """ Increment the index if incrementing it won't make it go out of bounds.
-    Haskell:
+    Haskell notation:
         IncrementIndex :: [Token] -> Integer -> Integer
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -74,7 +74,7 @@ def IncrementIndex(tokens: List[Token], index: int) -> int:
 def BinaryOperation(f: Callable[[A, B], C], acceptedTokens: List[Token], tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
     """ Create BinaryOperationNode.
     The BinaryOperationNode will be assigned with a left node, operator and right node.
-    Haskell:
+    Haskell notation:
         BinaryOperation :: Callable -> [Token] -> [Token] -> Integer -> Tuple
     Parameters:
         f (Callable): Callable which is used to get the left and right nodes for.
@@ -90,7 +90,7 @@ def BinaryOperation(f: Callable[[A, B], C], acceptedTokens: List[Token], tokens:
     def AssignNode(lhs: 'Node', i: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
         """ This function assigns the BinaryOperation node when 
         the current token is in the accepted token list. 
-        Haskell:
+        Haskell notation:
             AssignNode :: Node -> Integer -> Tuple 
         Parameters:
             lhs (Node): The left node. 
@@ -111,7 +111,7 @@ def BinaryOperation(f: Callable[[A, B], C], acceptedTokens: List[Token], tokens:
 
 def Arithmic(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
     """ Parse Arithmic expression.
-    Haskell:
+    Haskell notation:
         Arithmic :: [Token] -> Integer -> Tuple
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -124,7 +124,7 @@ def Arithmic(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode
 
 def Comparison(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
     """ Parse Comparison expression.
-    Haskell:
+    Haskell notation:
         Comparison :: [Token] -> Integer -> Tuple 
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -137,7 +137,7 @@ def Comparison(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNo
 
 def Expression(tokens: List[Token], index: int) -> Tuple['Node', int]:
     """ Parse an Expression
-    Haskell:
+    Haskell notation:
         Expression :: [Token] -> Integer -> Tuple 
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -161,7 +161,7 @@ def Expression(tokens: List[Token], index: int) -> Tuple['Node', int]:
 
 def ElseStatement(tokens: List[Token], index: int) -> Tuple['Node', int]:
     """ Parse an Else Statement.
-    Haskell:
+    Haskell notation:
         ElseStatement :: [Token] -> Integer -> Tuple 
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -188,7 +188,7 @@ def ElseStatement(tokens: List[Token], index: int) -> Tuple['Node', int]:
 
 def IfStatement(tokens: List[Token], index: int) -> Tuple[IfNode, int]:
     """ Parse an If Statement.
-    Haskell:
+    Haskell notation:
         IfStatement :: [Token] -> Integer -> Tuple
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -221,7 +221,7 @@ def IfStatement(tokens: List[Token], index: int) -> Tuple[IfNode, int]:
 
 def WhileLoop(tokens: List[Token], index: int) -> Tuple[WhileNode, int]:
     """ Parse a While loop.
-    Haskell:
+    Haskell notation:
         WhileLoop :: [Token] -> Integer -> Tuple
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -247,7 +247,7 @@ def WhileLoop(tokens: List[Token], index: int) -> Tuple[WhileNode, int]:
 
 def FunctionDefenition(tokens: List[Token], index: int) -> Tuple[FunctionDefenitionNode, int]:
     """ Parse a Function defenition.
-    Haskell:
+    Haskell notation:
         Expression :: [Token] -> Integer -> Tuple
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -291,7 +291,7 @@ def FunctionDefenition(tokens: List[Token], index: int) -> Tuple[FunctionDefenit
 
 def CallFunction(tokens: List[Token], index: int) -> Tuple[Union[NumberNode, VariableAccessNode, IfNode, WhileNode, FunctionCallNode, ReturnNode], int]:
     """ Parsa a function call.
-    Haskell:
+    Haskell notation:
         CallFunction :: [Token] -> Integer -> Tuple
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -318,7 +318,7 @@ def CallFunction(tokens: List[Token], index: int) -> Tuple[Union[NumberNode, Var
 
 def Factor(tokens: List[Token], index: int) -> Tuple[Union[NumberNode, VariableAccessNode, IfNode, WhileNode, FunctionCallNode, ReturnNode], int]:
     """ Parse a Factor.
-    Haskell:
+    Haskell notation:
         Factor :: [Token] -> Integer -> Tuple
     This function does most of the work. It detects the type of the current token
     and makes sure the corresponding node gets created and returned.
@@ -356,7 +356,7 @@ def Factor(tokens: List[Token], index: int) -> Tuple[Union[NumberNode, VariableA
 def Try(index: int, f: Callable[[List[Token], int], Tuple['Node', int]]) -> Tuple['Node', int]:
     """ Try to get a node.
     The index will get reverted back to where it started when there is no node found.
-    Haskell:
+    Haskell notation:
         Try :: Integer -> Callable -> Tuple
     Parameters:
         index (Lst): The index prior to the function call.
@@ -370,7 +370,7 @@ def Try(index: int, f: Callable[[List[Token], int], Tuple['Node', int]]) -> Tupl
 
 def Statement(tokens: List[Token], index: int) -> Tuple['Node', int]:
     """ Parse a Statement.
-    Haskell:
+    Haskell notation:
         Statement :: [Token] -> Integer -> Tuple
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -387,7 +387,7 @@ def Statement(tokens: List[Token], index: int) -> Tuple['Node', int]:
 
 def Statements(tokens: List[Token], index: int) -> Tuple[ListNode, int]:
     """ Parse Statements.
-    Haskell:
+    Haskell notation:
         Statements :: [Token] -> Integer -> Tuple
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -399,7 +399,7 @@ def Statements(tokens: List[Token], index: int) -> Tuple[ListNode, int]:
     @SkipDecorator
     def SkipNewLines(token: Token, tokens: List[Token], index: int, skipped: int) -> Tuple[int, int]:
         """ This function skips new lines. 
-        Haskell:
+        Haskell notation:
             Expression :: Token -> [Token] -> Integer -> Integer -> Tuple
         Parameters:
             token (Token): The token which will be skipped upon. 
@@ -415,7 +415,7 @@ def Statements(tokens: List[Token], index: int) -> Tuple[ListNode, int]:
 
     def GetStatements(tokenList: List[Token], i: int) -> int:
         """ This function gets all statements.
-        Haskell:
+        Haskell notation:
             GetStatements :: [Token] -> Integer -> Integer 
         Parameters:
             tokenList (Lst): List with the tokens which will be parsed.
@@ -442,7 +442,7 @@ def Statements(tokens: List[Token], index: int) -> Tuple[ListNode, int]:
 
 def Term(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, NumberNode, VariableAssignNode], int]:
     """ Parse a Term.
-    Haskell:
+    Haskell notation:
         Term :: [Token] -> Integer -> Tuple
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.
@@ -455,7 +455,7 @@ def Term(tokens: List[Token], index: int) -> Tuple[Union[BinaryOperationNode, Nu
 
 def Parse(tokens: List[Token], index: int) -> ListNode:
     """ Parse the tokens and create an AST.
-    Haskell:
+    Haskell notation:
         Parse :: [Token] -> Integer -> ListNode
     Parameters:
         tokens (Lst): List with the tokens which will be parsed.

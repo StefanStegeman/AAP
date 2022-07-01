@@ -12,7 +12,7 @@ import sys
 
 def InterpretFile(filename: str) -> List[Number]:
     """ Read and interpret a .AAP file.
-    Haskell:
+    Haskell notation:
         InterpretFile :: String -> [Number]
     This contains three steps:
         - Create tokens with the Lexer.
@@ -38,7 +38,7 @@ def InterpretFile(filename: str) -> List[Number]:
 
 def CompileFile(input: str, output: str) -> None:
     """ Read and compile a .AAP file.
-    Haskell:
+    Haskell notation:
         CompileFile :: String -> String -> None
     This contains three steps:
         - Create tokens with the Lexer.

@@ -6,7 +6,7 @@ from typing import List, Tuple
 class Function:
     def __init__(self, name: str, arguments: List[Identifier], body: ListNode, context: Context) -> None:
         """ Initialize the function class. 
-        Haskell:
+        Haskell notation notation:
             Init :: String -> [Identifier] -> ListNode -> Context -> None
         Parameters:
             name (str): The name of the function. 
@@ -21,7 +21,7 @@ class Function:
 
     def Compile(self, arguments: ListNode, context: Context) -> Tuple[ListNode, Context]:
         """ Compile the function's body.
-        Haskell:
+        Haskell notation notation:
             Compile :: ListNode -> Context -> Tuple
         Parameters:
             arguments (Lst): The arguments passed into the function.
